@@ -32,12 +32,13 @@ namespace InfluxDb
             var config = _config.Data;
 
             _influxDbWriteEndpoints = new InfluxDbWriteEndpoints(config);
-            var influxDbWriteClient = new InfluxDbWriteClient(_influxDbWriteEndpoints);
+            var influxDbWriteClient = new InfluxDbWriteClient(_influxDbWriteEndpoints, config);
 
             var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
             _influxDbWriteClient = new ThrottledInfluxDbWriteClient(influxDbWriteClient, interval);
             _influxDbWriteClient.StartWriting();
 
+            InfluxDbPointFactory.WriteEndpoints = _influxDbWriteEndpoints;
             InfluxDbPointFactory.WriteClient = _influxDbWriteClient;
             InfluxDbPointFactory.Enabled = config.Enable;
 

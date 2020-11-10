@@ -5,7 +5,7 @@ using Torch.Views;
 
 namespace InfluxDb
 {
-    public sealed class InfluxDbConfig : ViewModel, IInfluxDbConfig
+    public sealed class InfluxDbConfig : ViewModel, IInfluxDbConfig, InfluxDbWriteClient.IConfig
     {
         const string GroupName = "InfluxDB";
 

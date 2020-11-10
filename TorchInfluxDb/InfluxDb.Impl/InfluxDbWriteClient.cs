@@ -1,28 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NLog;
 
 namespace InfluxDb.Impl
 {
     internal sealed class InfluxDbWriteClient : IInfluxDbWriteClient
     {
-        readonly InfluxDbWriteEndpoints _endpoints;
+        public interface IConfig
+        {
+            bool SuppressResponseError { get; }
+        }
 
-        public InfluxDbWriteClient(InfluxDbWriteEndpoints endpoints)
+        static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+        readonly InfluxDbWriteEndpoints _endpoints;
+        readonly IConfig _config;
+
+        public InfluxDbWriteClient(InfluxDbWriteEndpoints endpoints, IConfig config)
         {
             _endpoints = endpoints;
+            _config = config;
         }
 
-        public async Task WriteAsync(IEnumerable<InfluxDbPoint> points)
+        public Task WriteAsync(IEnumerable<InfluxDbPoint> points)
         {
-            var lines = points.Select(p => p.BuildLine());
-            await _endpoints.WriteAsync(lines);
+            var lines = points.Select(p => p.BuildLine()).ToArray();
+            return DoWriteAsync(lines);
         }
 
-        public async Task WriteAsync(InfluxDbPoint point)
+        public Task WriteAsync(InfluxDbPoint point)
         {
             var line = point.BuildLine();
-            await _endpoints.WriteAsync(new[] {line});
+            return DoWriteAsync(new[] {line});
+        }
+
+        async Task DoWriteAsync(IReadOnlyCollection<string> lines)
+        {
+            try
+            {
+                await _endpoints.WriteAsync(lines);
+            }
+            catch (Exception e)
+            {
+                if (_config.SuppressResponseError) return;
+
+                Log.Error(e.Message);
+            }
         }
     }
 }

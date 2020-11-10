@@ -12,6 +12,7 @@ namespace InfluxDb
     public static class InfluxDbPointFactory
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+        internal static InfluxDbWriteEndpoints WriteEndpoints { private get; set; }
         internal static IInfluxDbWriteClient WriteClient { private get; set; }
         internal static bool Enabled { private get; set; }
 
@@ -25,6 +26,18 @@ namespace InfluxDb
             point.Time(DateTime.UtcNow); // default time
 
             return point;
+        }
+
+        public static async Task WriteLineAsync(string line)
+        {
+            line.ThrowIfNullOrEmpty(nameof(line));
+            WriteClient.ThrowIfNull("Integration not initialized");
+            if (!Enabled)
+            {
+                throw new Exception("Not enabled");
+            }
+
+            await WriteEndpoints.WriteAsync(new[] {line});
         }
 
         public static void Write(this InfluxDbPoint point)

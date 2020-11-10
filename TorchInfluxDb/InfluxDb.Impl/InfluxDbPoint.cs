@@ -25,10 +25,9 @@ namespace InfluxDb.Impl
         {
             measurement.ThrowIfNullOrEmpty(nameof(measurement));
             AssertNamingRestriction(measurement);
-
             measurement = InfluxDbEscapeHandler.HandleMeasurement(measurement);
-            _measurement = measurement;
 
+            _measurement = measurement;
             _tags = new Dictionary<string, string>();
             _fields = new Dictionary<string, string>();
         }
@@ -44,11 +43,10 @@ namespace InfluxDb.Impl
             key.ThrowIfNullOrEmpty(nameof(key));
             value.ThrowIfNull(nameof(value));
             AssertNamingRestriction(key);
-
             key = InfluxDbEscapeHandler.HandleTagKey(key);
             value = InfluxDbEscapeHandler.HandleTagValue(value);
 
-            _tags[key] = value;
+            _tags.Add(key, value);
             return this;
         }
 
@@ -57,12 +55,11 @@ namespace InfluxDb.Impl
             key.ThrowIfNullOrEmpty(nameof(key));
             value.ThrowIfNull(nameof(value));
             AssertNamingRestriction(key);
-
             key = InfluxDbEscapeHandler.HandleFieldKey(key);
             value = InfluxDbEscapeHandler.HandleFieldValue(value);
 
             var valueStr = $"\"{value}\"";
-            _fields[key] = valueStr;
+            _fields.Add(key, valueStr);
             return this;
         }
 
@@ -70,6 +67,7 @@ namespace InfluxDb.Impl
         {
             key.ThrowIfNullOrEmpty(nameof(key));
             AssertNamingRestriction(key);
+            key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             if (float.IsInfinity(value) || float.IsNaN(value))
             {
@@ -78,7 +76,7 @@ namespace InfluxDb.Impl
             }
 
             var valueStr = $"{value}";
-            _fields[key] = valueStr;
+            _fields.Add(key, valueStr);
             return this;
         }
 
@@ -86,6 +84,7 @@ namespace InfluxDb.Impl
         {
             key.ThrowIfNullOrEmpty(nameof(key));
             AssertNamingRestriction(key);
+            key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             if (double.IsInfinity(value) || double.IsNaN(value))
             {
@@ -94,7 +93,7 @@ namespace InfluxDb.Impl
             }
 
             var valueStr = $"{value}";
-            _fields[key] = valueStr;
+            _fields.Add(key, valueStr);
             return this;
         }
 
@@ -102,9 +101,10 @@ namespace InfluxDb.Impl
         {
             key.ThrowIfNullOrEmpty(nameof(key));
             AssertNamingRestriction(key);
+            key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = $"{value}i";
-            _fields[key] = valueStr;
+            _fields.Add(key, valueStr);
             return this;
         }
 
@@ -112,9 +112,10 @@ namespace InfluxDb.Impl
         {
             key.ThrowIfNullOrEmpty(nameof(key));
             AssertNamingRestriction(key);
+            key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = $"{value}u";
-            _fields[key] = valueStr;
+            _fields.Add(key, valueStr);
             return this;
         }
 
@@ -122,9 +123,10 @@ namespace InfluxDb.Impl
         {
             key.ThrowIfNullOrEmpty(nameof(key));
             AssertNamingRestriction(key);
+            key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = $"{value}";
-            _fields[key] = valueStr;
+            _fields.Add(key, valueStr);
             return this;
         }
 
@@ -132,9 +134,10 @@ namespace InfluxDb.Impl
         {
             key.ThrowIfNullOrEmpty(nameof(key));
             AssertNamingRestriction(key);
+            key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = TimeToString(value);
-            _fields[key] = valueStr;
+            _fields.Add(key, valueStr);
             return this;
         }
 

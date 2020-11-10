@@ -164,6 +164,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="InfluxDb\InfluxDbCommandModule.cs" />
         <Compile Include="InfluxDb\InfluxDbPointFactory.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="InfluxDb.Impl\IInfluxDbConfig.cs" />
