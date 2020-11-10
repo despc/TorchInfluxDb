@@ -143,6 +143,11 @@ namespace InfluxDb.Impl
 
         internal string BuildLine()
         {
+            if (_fields.Count == 0)
+            {
+                throw new Exception($"No field. Measurement: {_measurement}, tags: {_tags.ToStringSeq()}");
+            }
+
             var firstSection = new List<string>();
             var secondSection = new List<string>();
 
