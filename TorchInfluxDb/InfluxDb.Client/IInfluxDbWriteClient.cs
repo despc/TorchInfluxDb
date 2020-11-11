@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace InfluxDb.Impl
+namespace InfluxDb.Client
 {
-    internal interface IInfluxDbWriteClient
+    public interface IInfluxDbWriteClient
     {
         Task WriteAsync(IEnumerable<InfluxDbPoint> points);
         Task WriteAsync(InfluxDbPoint point);

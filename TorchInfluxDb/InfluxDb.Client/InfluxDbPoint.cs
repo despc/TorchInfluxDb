@@ -5,7 +5,7 @@ using NLog;
 using TorchUtils;
 using VRage;
 
-namespace InfluxDb.Impl
+namespace InfluxDb.Client
 {
     /// <summary>
     /// Builder of an InfluxDB data point.

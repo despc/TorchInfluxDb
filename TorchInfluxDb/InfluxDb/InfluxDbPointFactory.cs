@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using InfluxDb.Impl;
+using InfluxDb.Client;
 using NLog;
 using TorchUtils;
 
@@ -40,15 +40,6 @@ namespace InfluxDb
             await WriteEndpoints.WriteAsync(new[] {line});
         }
 
-        public static void Write(this InfluxDbPoint point)
-        {
-            point.ThrowIfNull(nameof(point));
-            WriteClient.ThrowIfNull("Integration not initialized");
-            if (!Enabled) return;
-
-            WriteClient.WriteAsync(point).Forget(Log);
-        }
-
         public static async Task WriteAsync(this InfluxDbPoint point)
         {
             point.ThrowIfNull(nameof(point));
@@ -56,6 +47,11 @@ namespace InfluxDb
             if (!Enabled) return;
 
             await WriteClient.WriteAsync(point);
+        }
+
+        public static void Write(this InfluxDbPoint point)
+        {
+            point.WriteAsync().Forget(Log);
         }
     }
 }

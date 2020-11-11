@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using NLog;
 using TorchUtils;
 
-namespace InfluxDb.Impl
+namespace InfluxDb.Client
 {
     /// <summary>
     /// Holds onto points until the next time interval.
     /// Reduces the number of HTTP calls.
     /// </summary>
-    internal sealed class ThrottledInfluxDbWriteClient : IInfluxDbWriteClient
+    public sealed class ThrottledInfluxDbWriteClient : IInfluxDbWriteClient
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 

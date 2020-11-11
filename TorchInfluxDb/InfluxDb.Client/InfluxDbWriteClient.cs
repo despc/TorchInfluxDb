@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using NLog;
 
-namespace InfluxDb.Impl
+namespace InfluxDb.Client
 {
-    internal sealed class InfluxDbWriteClient : IInfluxDbWriteClient
+    public sealed class InfluxDbWriteClient : IInfluxDbWriteClient
     {
         public interface IConfig
         {

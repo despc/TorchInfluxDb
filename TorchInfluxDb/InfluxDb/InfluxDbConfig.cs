@@ -1,11 +1,14 @@
 ﻿using System.Xml.Serialization;
-using InfluxDb.Impl;
+using InfluxDb.Client;
 using Torch;
 using Torch.Views;
 
 namespace InfluxDb
 {
-    public sealed class InfluxDbConfig : ViewModel, IInfluxDbConfig, InfluxDbWriteClient.IConfig
+    public sealed class InfluxDbConfig :
+        ViewModel,
+        InfluxDbWriteEndpoints.IConfig,
+        InfluxDbWriteClient.IConfig
     {
         const string GroupName = "InfluxDB";
 

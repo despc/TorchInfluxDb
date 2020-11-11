@@ -6,16 +6,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using TorchUtils;
 
-namespace InfluxDb.Impl
+namespace InfluxDb.Client
 {
     // https://docs.influxdata.com/influxdb/v2.0/write-data/developer-tools/api/
-    internal sealed class InfluxDbWriteEndpoints : IDisposable
+    public sealed class InfluxDbWriteEndpoints : IDisposable
     {
-        readonly IInfluxDbConfig _config;
+        public interface IConfig
+        {
+            string HostUrl { get; }
+            string Organization { get; }
+            string Bucket { get; }
+            string AuthenticationToken { get; }
+        }
+        
+        readonly IConfig _config;
         readonly HttpClient _httpClient;
         readonly CancellationTokenSource _cancellationTokenSource;
 
-        public InfluxDbWriteEndpoints(IInfluxDbConfig config)
+        public InfluxDbWriteEndpoints(IConfig config)
         {
             _config = config;
             _httpClient = new HttpClient();

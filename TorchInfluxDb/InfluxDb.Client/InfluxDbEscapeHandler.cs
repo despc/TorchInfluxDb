@@ -1,9 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace InfluxDb.Impl
+namespace InfluxDb.Client
 {
     // https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/#special-characters
-    internal static class InfluxDbEscapeHandler
+    public static class InfluxDbEscapeHandler
     {
         const string Escape = @"\$1";
         const string MeasurementSpecialChars = @"([, ])";
