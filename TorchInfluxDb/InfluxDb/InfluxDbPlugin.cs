@@ -36,7 +36,7 @@ namespace InfluxDb
 
             var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
             _influxDbWriteClient = new ThrottledInfluxDbWriteClient(influxDbWriteClient, interval);
-            _influxDbWriteClient.StartWriting();
+            _influxDbWriteClient.SetRunning(config.Enable);
 
             InfluxDbPointFactory.WriteEndpoints = _influxDbWriteEndpoints;
             InfluxDbPointFactory.WriteClient = _influxDbWriteClient;
@@ -44,6 +44,7 @@ namespace InfluxDb
 
             config.PropertyChanged += (_, __) =>
             {
+                _influxDbWriteClient.SetRunning(config.Enable);
                 InfluxDbPointFactory.Enabled = config.Enable;
             };
 
@@ -72,6 +73,7 @@ namespace InfluxDb
         {
             _config.Dispose();
             _influxDbWriteClient?.StopWriting();
+            _influxDbWriteClient?.Flush();
             _influxDbWriteEndpoints?.Dispose();
         }
     }
