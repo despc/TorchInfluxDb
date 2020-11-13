@@ -17,8 +17,8 @@ namespace InfluxDb
         Persistent<InfluxDbConfig> _config;
         UserControl _userControl;
 
-        InfluxDbWriteEndpoints _influxDbWriteEndpoints;
-        ThrottledInfluxDbWriteClient _influxDbWriteClient;
+        InfluxDbWriteEndpoints _endpoints;
+        ThrottledInfluxDbWriteClient _throttledWriteClient;
 
         public UserControl GetControl() => _userControl ?? (_userControl = CreateUserControl());
 
@@ -31,34 +31,32 @@ namespace InfluxDb
             _config = Persistent<InfluxDbConfig>.Load(configFilePath);
             var config = _config.Data;
 
-            _influxDbWriteEndpoints = new InfluxDbWriteEndpoints(config);
-            var influxDbWriteClient = new InfluxDbWriteClient(_influxDbWriteEndpoints, config);
+            _endpoints = new InfluxDbWriteEndpoints(config);
+            var writeClient = new InfluxDbWriteClient(_endpoints, config);
 
             var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
-            _influxDbWriteClient = new ThrottledInfluxDbWriteClient(influxDbWriteClient, interval);
-            _influxDbWriteClient.SetRunning(config.Enable);
+            _throttledWriteClient = new ThrottledInfluxDbWriteClient(writeClient, interval);
 
-            InfluxDbPointFactory.WriteEndpoints = _influxDbWriteEndpoints;
-            InfluxDbPointFactory.WriteClient = _influxDbWriteClient;
+            InfluxDbPointFactory.WriteEndpoints = _endpoints;
+            InfluxDbPointFactory.WriteClient = _throttledWriteClient;
             InfluxDbPointFactory.Enabled = config.Enable;
 
             config.PropertyChanged += (_, __) =>
             {
-                _influxDbWriteClient.SetRunning(config.Enable);
+                _throttledWriteClient.SetRunning(config.Enable);
                 InfluxDbPointFactory.Enabled = config.Enable;
             };
 
             if (config.Enable)
             {
                 // test integrity
-                InfluxDbPointFactory
-                    .Measurement("plugin_init")
-                    .Field("message", "successfully initialized")
-                    .WriteAsync()
-                    .Wait();
+                var point = new InfluxDbPoint("plugin_init").Field("message", "successfully initialized");
+                writeClient.WriteAsync(point).Wait();
 
                 Log.Info("InfluxDB integrity tested");
             }
+            
+            _throttledWriteClient.SetRunning(config.Enable);
         }
 
         UserControl CreateUserControl()
@@ -72,9 +70,9 @@ namespace InfluxDb
         void OnGameUnloading()
         {
             _config.Dispose();
-            _influxDbWriteClient?.StopWriting();
-            _influxDbWriteClient?.Flush();
-            _influxDbWriteEndpoints?.Dispose();
+            _throttledWriteClient?.StopWriting();
+            _throttledWriteClient?.Flush();
+            _endpoints?.Dispose();
         }
     }
 }
