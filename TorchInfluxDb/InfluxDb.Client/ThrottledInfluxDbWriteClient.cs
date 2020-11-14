@@ -54,6 +54,18 @@ namespace InfluxDb.Client
             _self.WriteAsync(points).Forget(Log);
         }
 
+        public void SetRunning(bool enable)
+        {
+            if (enable)
+            {
+                StartWriting();
+            }
+            else
+            {
+                StopWriting();
+            }
+        }
+
         public void StartWriting()
         {
             if (!_throttle.Start())
@@ -70,6 +82,11 @@ namespace InfluxDb.Client
                 return;
             }
 
+            Flush();
+        }
+
+        public void Flush()
+        {
             _throttle.Flush(); // write remaining points
             Thread.Sleep(1000); // wait for writes to finish
         }
