@@ -5,7 +5,6 @@ using NLog;
 using Torch;
 using Torch.API;
 using Torch.API.Plugins;
-using Torch.Views;
 using TorchUtils;
 
 namespace InfluxDb
@@ -18,9 +17,10 @@ namespace InfluxDb
         UserControl _userControl;
 
         InfluxDbWriteEndpoints _endpoints;
+        InfluxDbWriteClient _writeClient;
         ThrottledInfluxDbWriteClient _throttledWriteClient;
 
-        public UserControl GetControl() => _userControl ?? (_userControl = CreateUserControl());
+        public UserControl GetControl() => _config.GetOrCreateUserControl(ref _userControl);
 
         public override void Init(ITorchBase torch)
         {
@@ -32,39 +32,42 @@ namespace InfluxDb
             var config = _config.Data;
 
             _endpoints = new InfluxDbWriteEndpoints(config);
-            var writeClient = new InfluxDbWriteClient(_endpoints, config);
+            _writeClient = new InfluxDbWriteClient(_endpoints, config);
 
             var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
-            _throttledWriteClient = new ThrottledInfluxDbWriteClient(writeClient, interval);
+            _throttledWriteClient = new ThrottledInfluxDbWriteClient(_writeClient, interval);
 
             InfluxDbPointFactory.WriteEndpoints = _endpoints;
             InfluxDbPointFactory.WriteClient = _throttledWriteClient;
             InfluxDbPointFactory.Enabled = config.Enable;
 
-            config.PropertyChanged += (_, __) =>
-            {
-                _throttledWriteClient.SetRunning(config.Enable);
-                InfluxDbPointFactory.Enabled = config.Enable;
-            };
+            config.PropertyChanged += (_, __) => OnConfigUpdated();
 
             if (config.Enable)
             {
-                // test integrity
-                var point = new InfluxDbPoint("plugin_init").Field("message", "successfully initialized");
-                writeClient.WriteAsync(point).Wait();
-
-                Log.Info("InfluxDB integrity tested");
+                TestIntegrity();
             }
-            
+
             _throttledWriteClient.SetRunning(config.Enable);
         }
 
-        UserControl CreateUserControl()
+        void OnConfigUpdated()
         {
-            return new PropertyGrid
-            {
-                DataContext = _config.Data,
-            };
+            var config = _config.Data;
+
+            InfluxDbPointFactory.Enabled = config.Enable;
+
+            _throttledWriteClient.SetRunning(config.Enable);
+
+            Log.Info($"Update config; database writing enabled: {config.Enable}");
+        }
+
+        void TestIntegrity()
+        {
+            var point = new InfluxDbPoint("plugin_init").Field("message", "successfully initialized");
+            _writeClient.WriteAsync(point).Wait();
+
+            Log.Info("InfluxDB integrity tested");
         }
 
         void OnGameUnloading()
