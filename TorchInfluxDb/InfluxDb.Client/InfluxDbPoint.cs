@@ -46,8 +46,23 @@ namespace InfluxDb.Client
             key = InfluxDbEscapeHandler.HandleTagKey(key);
             value = InfluxDbEscapeHandler.HandleTagValue(value);
 
+            if (_tags.TryGetValue(key, out var existingValue))
+            {
+                throw new ArgumentException($"Tag already added: {key}, existing value: {existingValue}, measurement: {_measurement}");
+            }
+
             _tags.Add(key, value);
             return this;
+        }
+
+        void AddFieldRaw(string key, string value)
+        {
+            if (_fields.TryGetValue(key, out var existingValue))
+            {
+                throw new ArgumentException($"Field already added: {key}, existing value: {existingValue}, measurement: {_measurement}");
+            }
+
+            _fields.Add(key, value);
         }
 
         public InfluxDbPoint Field(string key, string value)
@@ -59,7 +74,7 @@ namespace InfluxDb.Client
             value = InfluxDbEscapeHandler.HandleFieldValue(value);
 
             var valueStr = $"\"{value}\"";
-            _fields.Add(key, valueStr);
+            AddFieldRaw(key, valueStr);
             return this;
         }
 
@@ -76,7 +91,7 @@ namespace InfluxDb.Client
             }
 
             var valueStr = $"{value}";
-            _fields.Add(key, valueStr);
+            AddFieldRaw(key, valueStr);
             return this;
         }
 
@@ -93,7 +108,7 @@ namespace InfluxDb.Client
             }
 
             var valueStr = $"{value}";
-            _fields.Add(key, valueStr);
+            AddFieldRaw(key, valueStr);
             return this;
         }
 
@@ -104,7 +119,7 @@ namespace InfluxDb.Client
             key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = $"{value}i";
-            _fields.Add(key, valueStr);
+            AddFieldRaw(key, valueStr);
             return this;
         }
 
@@ -115,7 +130,7 @@ namespace InfluxDb.Client
             key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = $"{value}u";
-            _fields.Add(key, valueStr);
+            AddFieldRaw(key, valueStr);
             return this;
         }
 
@@ -126,7 +141,7 @@ namespace InfluxDb.Client
             key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = $"{value}";
-            _fields.Add(key, valueStr);
+            AddFieldRaw(key, valueStr);
             return this;
         }
 
@@ -137,7 +152,7 @@ namespace InfluxDb.Client
             key = InfluxDbEscapeHandler.HandleFieldKey(key);
 
             var valueStr = TimeToString(value);
-            _fields.Add(key, valueStr);
+            AddFieldRaw(key, valueStr);
             return this;
         }
 
