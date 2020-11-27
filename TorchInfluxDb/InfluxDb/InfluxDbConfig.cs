@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using InfluxDb.Client;
+using InfluxDb.Client.Write;
 using Torch;
 using Torch.Views;
 

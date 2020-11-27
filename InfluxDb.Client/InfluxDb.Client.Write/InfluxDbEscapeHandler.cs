@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace InfluxDb.Client
+namespace InfluxDb.Client.Write
 {
     // https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/#special-characters
     public static class InfluxDbEscapeHandler

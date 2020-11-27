@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using InfluxDb.Client;
+using InfluxDb.Client.Write;
 using NLog;
 using Utils.General;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NLog;
 using Utils.General;
 
-namespace InfluxDb.Client
+namespace InfluxDb.Client.Write
 {
     /// <summary>
     /// Builder of an InfluxDB data point.

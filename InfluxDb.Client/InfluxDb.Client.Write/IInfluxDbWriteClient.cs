@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace InfluxDb.Client
+namespace InfluxDb.Client.Write
 {
     public interface IInfluxDbWriteClient
     {

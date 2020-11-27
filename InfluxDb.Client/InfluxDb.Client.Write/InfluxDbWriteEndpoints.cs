@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Utils.General;
 
-namespace InfluxDb.Client
+namespace InfluxDb.Client.Write
 {
     // https://docs.influxdata.com/influxdb/v2.0/write-data/developer-tools/api/
     public sealed class InfluxDbWriteEndpoints : IDisposable

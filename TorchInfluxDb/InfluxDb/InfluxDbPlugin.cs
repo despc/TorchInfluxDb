@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Controls;
 using InfluxDb.Client;
+using InfluxDb.Client.Write;
 using NLog;
 using Torch;
 using Torch.API;

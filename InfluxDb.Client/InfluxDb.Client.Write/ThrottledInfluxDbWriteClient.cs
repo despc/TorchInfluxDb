@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using NLog;
 using Utils.General;
 
-namespace InfluxDb.Client
+namespace InfluxDb.Client.Write
 {
     /// <summary>
     /// Holds onto points until the next time interval.
