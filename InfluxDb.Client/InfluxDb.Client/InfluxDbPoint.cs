@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using NLog;
 using Utils.General;
-using VRage;
 
 namespace InfluxDb.Client
 {
@@ -21,7 +19,7 @@ namespace InfluxDb.Client
 
         string _time;
 
-        internal InfluxDbPoint(string measurement)
+        public InfluxDbPoint(string measurement)
         {
             measurement.ThrowIfNullOrEmpty(nameof(measurement));
             AssertNamingRestriction(measurement);
@@ -193,7 +191,7 @@ namespace InfluxDb.Client
         //https://docs.influxdata.com/influxdb/v2.0/reference/glossary/#unix-timestamp
         static string TimeToString(DateTime time)
         {
-            return $"{(long) (time.Subtract(DateTimeExtensions.Epoch).TotalSeconds * 1000)}";
+            return $"{(long) ((time - new DateTime(1970, 1, 1)).TotalSeconds * 1000)}";
         }
     }
 }

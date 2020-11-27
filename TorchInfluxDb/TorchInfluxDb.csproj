@@ -167,12 +167,6 @@
         <Compile Include="InfluxDb\InfluxDbCommandModule.cs" />
         <Compile Include="InfluxDb\InfluxDbPointFactory.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="InfluxDb.Client\IInfluxDbWriteClient.cs" />
-        <Compile Include="InfluxDb.Client\InfluxDbEscapeHandler.cs" />
-        <Compile Include="InfluxDb.Client\InfluxDbPoint.cs" />
-        <Compile Include="InfluxDb.Client\InfluxDbWriteClient.cs" />
-        <Compile Include="InfluxDb.Client\InfluxDbWriteEndpoints.cs" />
-        <Compile Include="InfluxDb.Client\ThrottledInfluxDbWriteClient.cs" />
         <Compile Include="InfluxDb\InfluxDbConfig.cs" />
         <Compile Include="InfluxDb\InfluxDbPlugin.cs" />
         <Compile Include="Utils.General\AbsJsonConverter.cs" />
@@ -196,6 +190,15 @@
     <ItemGroup>
       <Content Include="manifest.xml" />
       <Content Include="postbuild.bat" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\InfluxDb.Client\InfluxDb.Client.csproj">
+        <Project>{918b30b1-4adc-4e41-b33e-3019361398f7}</Project>
+        <Name>InfluxDb.Client</Name>
+      </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="InfluxDb.Client" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
