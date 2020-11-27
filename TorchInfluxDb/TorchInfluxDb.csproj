@@ -164,11 +164,11 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="InfluxDb\InfluxDbCommandModule.cs" />
-        <Compile Include="InfluxDb\InfluxDbPointFactory.cs" />
+        <Compile Include="TorchInfluxDb\InfluxDbCommandModule.cs" />
+        <Compile Include="TorchInfluxDb\InfluxDbPointFactory.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="InfluxDb\InfluxDbConfig.cs" />
-        <Compile Include="InfluxDb\InfluxDbPlugin.cs" />
+        <Compile Include="TorchInfluxDb\InfluxDbConfig.cs" />
+        <Compile Include="TorchInfluxDb\InfluxDbPlugin.cs" />
         <Compile Include="Utils.General\AbsJsonConverter.cs" />
         <Compile Include="Utils.General\ActionDisposable.cs" />
         <Compile Include="Utils.General\CollectionUtils.cs" />

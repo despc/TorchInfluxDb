@@ -1,10 +1,9 @@
 ﻿using System.Xml.Serialization;
-using InfluxDb.Client;
 using InfluxDb.Client.Write;
 using Torch;
 using Torch.Views;
 
-namespace InfluxDb
+namespace TorchInfluxDb
 {
     public sealed class InfluxDbConfig :
         ViewModel,
@@ -14,11 +13,11 @@ namespace InfluxDb
         const string GroupName = "InfluxDB";
 
         bool _enable;
-        float _writeIntervalSecs = 10;
         string _hostUrl = "http://localhost:8086";
-        string _organization = "Some Organization";
         string _bucket = "test";
-        string _authenticationToken = "";
+        string _username = "";
+        string _password = "";
+        float _writeIntervalSecs = 10;
         bool _suppressResponseError;
 
         [XmlElement("Enable")]
@@ -37,28 +36,28 @@ namespace InfluxDb
             set => SetProperty(ref _hostUrl, value);
         }
 
-        [XmlElement("Organization")]
-        [Display(Order = 3, Name = "Organization Name", GroupName = GroupName)]
-        public string Organization
-        {
-            get => _organization;
-            set => SetProperty(ref _organization, value);
-        }
-
         [XmlElement("Bucket")]
-        [Display(Order = 4, Name = "Bucket Name", GroupName = GroupName)]
+        [Display(Order = 3, Name = "Bucket Name", GroupName = GroupName)]
         public string Bucket
         {
             get => _bucket;
             set => SetProperty(ref _bucket, value);
         }
 
-        [XmlElement("AuthenticationToken")]
-        [Display(Order = 5, Name = "Authentication Token", GroupName = GroupName)]
-        public string AuthenticationToken
+        [XmlElement("Username")]
+        [Display(Order = 4, Name = "Username (Optional)", GroupName = GroupName)]
+        public string Username
         {
-            get => _authenticationToken;
-            set => SetProperty(ref _authenticationToken, value);
+            get => _username;
+            set => SetProperty(ref _username, value);
+        }
+
+        [XmlElement("Password")]
+        [Display(Order = 5, Name = "Password (Optional)", GroupName = GroupName)]
+        public string Password
+        {
+            get => _password;
+            set => SetProperty(ref _password, value);
         }
 
         [XmlElement("SuppressResponseError")]

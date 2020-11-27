@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using InfluxDb.Client;
 using InfluxDb.Client.Write;
 using NLog;
 using Utils.General;
 
-namespace InfluxDb
+namespace TorchInfluxDb
 {
     /// <summary>
     /// Massive syntax sugar

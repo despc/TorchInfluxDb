@@ -8,7 +8,7 @@ namespace InfluxDb.Client.Write
     /// <summary>
     /// Builder of an InfluxDB data point.
     /// </summary>
-    /// <remarks>For the protocol, see: https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol</remarks>
+    /// <remarks>For the protocol, see: https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_reference/</remarks>
     public sealed class InfluxDbPoint
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();

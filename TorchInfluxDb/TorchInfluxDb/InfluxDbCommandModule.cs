@@ -6,7 +6,7 @@ using Utils.Torch;
 using VRage.Game.ModAPI;
 using VRageMath;
 
-namespace InfluxDb
+namespace TorchInfluxDb
 {
     [Category(Category)]
     public sealed class InfluxDbCommandModule : CommandModule

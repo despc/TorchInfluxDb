@@ -8,17 +8,17 @@ using Utils.General;
 
 namespace InfluxDb.Client.Write
 {
-    // https://docs.influxdata.com/influxdb/v2.0/write-data/developer-tools/api/
+    // https://docs.influxdata.com/influxdb/v1.8/tools/api
     public sealed class InfluxDbWriteEndpoints : IDisposable
     {
         public interface IConfig
         {
             string HostUrl { get; }
-            string Organization { get; }
             string Bucket { get; }
-            string AuthenticationToken { get; }
+            string Username { get; }
+            string Password { get; }
         }
-        
+
         readonly IConfig _config;
         readonly HttpClient _httpClient;
         readonly CancellationTokenSource _cancellationTokenSource;
@@ -47,19 +47,20 @@ namespace InfluxDb.Client.Write
             }
 
             _config.HostUrl.ThrowIfNullOrEmpty(nameof(_config.HostUrl));
-            _config.Organization.ThrowIfNullOrEmpty(nameof(_config.Organization));
             _config.Bucket.ThrowIfNullOrEmpty(nameof(_config.Bucket));
 
-            var url = $"{_config.HostUrl}/api/v2/write?org={_config.Organization}&bucket={_config.Bucket}&precision=ms";
+            var url = $"{_config.HostUrl}/write?db={_config.Bucket}&precision=ms";
+
+            // authenticate
+            if (!string.IsNullOrEmpty(_config.Username) && !string.IsNullOrEmpty(_config.Password))
+            {
+                url += $"&u={_config.Username}&p={_config.Password}";
+            }
+
             var req = new HttpRequestMessage(HttpMethod.Post, url);
 
             var content = string.Join("\n", lines);
             req.Content = new StringContent(content);
-
-            if (!string.IsNullOrEmpty(_config.AuthenticationToken))
-            {
-                req.Headers.TryAddWithoutValidation("Authorization", $"Token {_config.AuthenticationToken}");
-            }
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
@@ -70,13 +71,8 @@ namespace InfluxDb.Client.Write
                 msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
                 msgBuilder.AppendLine($"Host URL: {_config.HostUrl}");
                 msgBuilder.AppendLine($"Bucket: {_config.Bucket}");
-                msgBuilder.AppendLine($"Organization: {_config.Organization}");
-
-                if (_config.AuthenticationToken != null)
-                {
-                    msgBuilder.AppendLine($"Authentication Token: {_config.AuthenticationToken.HideCredential(4)}");
-                }
-
+                msgBuilder.AppendLine($"Username: {_config.Username ?? "<empty>"}");
+                msgBuilder.AppendLine($"Password: {_config.Password ?? "<empty>"}");
                 msgBuilder.AppendLine($"Content ({lines.Count} lines): ");
 
                 foreach (var line in lines)
