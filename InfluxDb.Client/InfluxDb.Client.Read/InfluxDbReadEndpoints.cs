@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Utils.General;
 
@@ -30,7 +32,7 @@ namespace InfluxDb.Client.Read
             _httpClient.Dispose();
         }
 
-        public async Task<string> ReadAsync(string query)
+        public async Task<IEnumerable<InfluxDbSeries>> ReadAsync(string query)
         {
             query.ThrowIfNull(nameof(query));
 
@@ -50,22 +52,50 @@ namespace InfluxDb.Client.Read
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
-                if (res.IsSuccessStatusCode)
+                if (!res.IsSuccessStatusCode)
                 {
-                    var content = await res.Content.ReadAsStringAsync();
-                    return JToken.Parse(content).ToString(Formatting.Indented);
+                    var msgBuilder = new StringBuilder();
+
+                    msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
+                    msgBuilder.AppendLine($"Host URL: {_config.HostUrl}");
+                    msgBuilder.AppendLine($"Bucket: {_config.Bucket}");
+                    msgBuilder.AppendLine($"Username: {_config.Username ?? "<empty>"}");
+                    msgBuilder.AppendLine($"Password: {_config.Password ?? "<empty>"}");
+                    msgBuilder.AppendLine($"Query: {query}");
+
+                    throw new Exception(msgBuilder.ToString());
                 }
 
-                var msgBuilder = new StringBuilder();
+                var contentText = await res.Content.ReadAsStringAsync();
+                var contentToken = JToken.Parse(contentText);
 
-                msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
-                msgBuilder.AppendLine($"Host URL: {_config.HostUrl}");
-                msgBuilder.AppendLine($"Bucket: {_config.Bucket}");
-                msgBuilder.AppendLine($"Username: {_config.Username ?? "<empty>"}");
-                msgBuilder.AppendLine($"Password: {_config.Password ?? "<empty>"}");
-                msgBuilder.AppendLine($"Query: {query}");
+                var seriesList = new List<InfluxDbSeries>();
+                foreach (var resultToken in contentToken["results"])
+                foreach (var seriesToken in resultToken["series"])
+                {
+                    var name = seriesToken["name"].Value<string>();
+                    var tags = seriesToken["tags"].ToObject<Dictionary<string, string>>();
+                    var columns = seriesToken["columns"];
+                    var values = seriesToken["values"];
 
-                throw new Exception(msgBuilder.ToString());
+                    // make table
+                    var table = new DataTable();
+
+                    foreach (var column in columns)
+                    {
+                        table.Columns.Add(column.ToString());
+                    }
+
+                    foreach (var rowValues in values)
+                    {
+                        var row = rowValues.Select(v => (object) v.ToString()).ToArray();
+                        table.Rows.Add(row);
+                    }
+
+                    seriesList.Add(new InfluxDbSeries(name, tags, table));
+                }
+
+                return seriesList;
             }
         }
     }

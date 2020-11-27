@@ -71,6 +71,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="InfluxDb.Client.Read\InfluxDbSeries.cs" />
         <Compile Include="InfluxDb.Client.Read\InfluxDbReadEndpoints.cs" />
         <Compile Include="InfluxDb.Client.Write\IInfluxDbWriteClient.cs" />
         <Compile Include="InfluxDb.Client.Write\InfluxDbEscapeHandler.cs" />

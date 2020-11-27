@@ -19,6 +19,16 @@ namespace Utils.General
             }
         }
 
+        public static T OrThrow<T>(this T self, string msg)
+        {
+            if (self == null)
+            {
+                throw new NullReferenceException(msg);
+            }
+
+            return self;
+        }
+
         public static void ThrowIfNullOrEmpty(this string self, string msg)
         {
             if (string.IsNullOrEmpty(self))

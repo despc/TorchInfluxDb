@@ -63,7 +63,10 @@ namespace InfluxDb.Test
 
             // Will throw if anything went wrong
             var result = _readEndpoints.ReadAsync(query).Result;
-            Console.WriteLine(result);
+            foreach (var table in result)
+            {
+                Console.WriteLine(table);
+            }
         }
     }
 }
