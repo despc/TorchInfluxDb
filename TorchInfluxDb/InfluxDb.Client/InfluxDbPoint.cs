@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
-using TorchUtils;
+using Utils.General;
 using VRage;
 
 namespace InfluxDb.Client

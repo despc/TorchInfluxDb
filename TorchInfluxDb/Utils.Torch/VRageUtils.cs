@@ -3,12 +3,13 @@ using System.Linq;
 using Sandbox;
 using Sandbox.Game.Entities;
 using Sandbox.Game.World;
+using Utils.General;
 using VRage.Game.Entity;
 using VRage.Game.ModAPI;
 using VRage.Game.ObjectBuilders.Components;
 using VRage.ModAPI;
 
-namespace TorchUtils
+namespace Utils.Torch
 {
     internal static class VRageUtils
     {
@@ -93,6 +94,17 @@ namespace TorchUtils
             if (!MySandboxGame.ConfigDedicated.Administrators.TryGetFirst(out var adminSteamIdStr)) return 0L;
             if (!ulong.TryParse(adminSteamIdStr, out var adminSteamId)) return 0L;
             return adminSteamId;
+        }
+
+        public static bool IsAdminGrid(this IMyCubeGrid self)
+        {
+            foreach (var bigOwnerId in self.BigOwners)
+            {
+                var faction = MySession.Static.Factions.GetPlayerFaction(bigOwnerId);
+                if (faction?.Tag != "ADM") return false;
+            }
+
+            return true;
         }
     }
 }

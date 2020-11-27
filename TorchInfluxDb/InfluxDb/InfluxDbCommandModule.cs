@@ -1,7 +1,8 @@
 ﻿using System;
 using Torch.Commands;
 using Torch.Commands.Permissions;
-using TorchUtils;
+using Utils.General;
+using Utils.Torch;
 using VRage.Game.ModAPI;
 using VRageMath;
 

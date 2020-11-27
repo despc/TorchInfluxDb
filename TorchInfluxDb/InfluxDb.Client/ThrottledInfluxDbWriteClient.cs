@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
-using TorchUtils;
+using Utils.General;
 
 namespace InfluxDb.Client
 {

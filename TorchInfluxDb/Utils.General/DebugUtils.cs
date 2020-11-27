@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorchUtils
+namespace Utils.General
 {
     internal static class DebugUtils
     {

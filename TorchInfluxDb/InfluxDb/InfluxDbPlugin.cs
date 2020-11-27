@@ -5,7 +5,7 @@ using NLog;
 using Torch;
 using Torch.API;
 using Torch.API.Plugins;
-using TorchUtils;
+using Utils.Torch;
 
 namespace InfluxDb
 {

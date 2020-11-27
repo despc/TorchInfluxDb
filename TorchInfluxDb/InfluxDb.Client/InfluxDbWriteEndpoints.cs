@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TorchUtils;
+using Utils.General;
 
 namespace InfluxDb.Client
 {
