@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using InfluxDb.Client;
 using InfluxDb.Client.Write;
 using Torch;
 using Torch.Views;
@@ -7,7 +8,7 @@ namespace TorchInfluxDb
 {
     public sealed class InfluxDbConfig :
         ViewModel,
-        InfluxDbWriteEndpoints.IConfig,
+        IInfluxDbEndpointConfig,
         InfluxDbWriteClient.IConfig
     {
         const string GroupName = "InfluxDB";

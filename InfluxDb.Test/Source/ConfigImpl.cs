@@ -1,8 +1,8 @@
-﻿using InfluxDb.Client.Write;
+﻿using InfluxDb.Client;
 
 namespace InfluxDb.Test
 {
-    public sealed class ConfigImpl : InfluxDbWriteEndpoints.IConfig
+    public sealed class ConfigImpl : IInfluxDbEndpointConfig
     {
         public string HostUrl { get; set; }
         public string Bucket { get; set; }

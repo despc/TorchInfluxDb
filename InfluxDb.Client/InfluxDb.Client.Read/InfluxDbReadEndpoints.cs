@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Utils.General;
 
-namespace InfluxDb.Client.Write
+namespace InfluxDb.Client.Read
 {
-    // https://docs.influxdata.com/influxdb/v1.8/tools/api
-    public sealed class InfluxDbWriteEndpoints : IDisposable
+    public sealed class InfluxDbReadEndpoints : IDisposable
     {
         readonly IInfluxDbEndpointConfig _config;
         readonly HttpClient _httpClient;
         readonly CancellationTokenSource _cancellationTokenSource;
 
-        public InfluxDbWriteEndpoints(IInfluxDbEndpointConfig config)
+        public InfluxDbReadEndpoints(IInfluxDbEndpointConfig config)
         {
             _config = config;
             _httpClient = new HttpClient();
@@ -29,19 +30,15 @@ namespace InfluxDb.Client.Write
             _httpClient.Dispose();
         }
 
-        public async Task WriteAsync(IReadOnlyCollection<string> lines)
+        public async Task<string> ReadAsync(string query)
         {
-            lines.ThrowIfNull(nameof(lines));
-
-            foreach (var line in lines)
-            {
-                line.ThrowIfNullOrEmpty(nameof(line));
-            }
+            query.ThrowIfNull(nameof(query));
 
             _config.HostUrl.ThrowIfNullOrEmpty(nameof(_config.HostUrl));
             _config.Bucket.ThrowIfNullOrEmpty(nameof(_config.Bucket));
 
-            var url = $"{_config.HostUrl}/write?db={_config.Bucket}&precision=ms";
+            var urlEncodedQuery = WebUtility.UrlEncode(query);
+            var url = $"{_config.HostUrl}/query?db={_config.Bucket}&q={urlEncodedQuery}&precision=ms";
 
             // authenticate
             if (!string.IsNullOrEmpty(_config.Username) && !string.IsNullOrEmpty(_config.Password))
@@ -49,14 +46,15 @@ namespace InfluxDb.Client.Write
                 url += $"&u={_config.Username}&p={_config.Password}";
             }
 
-            var req = new HttpRequestMessage(HttpMethod.Post, url);
-
-            var content = string.Join("\n", lines);
-            req.Content = new StringContent(content);
+            var req = new HttpRequestMessage(HttpMethod.Get, url);
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
-                if (res.IsSuccessStatusCode) return; // success
+                if (res.IsSuccessStatusCode)
+                {
+                    var content = await res.Content.ReadAsStringAsync();
+                    return JToken.Parse(content).ToString(Formatting.Indented);
+                }
 
                 var msgBuilder = new StringBuilder();
 
@@ -65,12 +63,7 @@ namespace InfluxDb.Client.Write
                 msgBuilder.AppendLine($"Bucket: {_config.Bucket}");
                 msgBuilder.AppendLine($"Username: {_config.Username ?? "<empty>"}");
                 msgBuilder.AppendLine($"Password: {_config.Password ?? "<empty>"}");
-                msgBuilder.AppendLine($"Content ({lines.Count} lines): ");
-
-                foreach (var line in lines)
-                {
-                    msgBuilder.AppendLine($"Line: {line}");
-                }
+                msgBuilder.AppendLine($"Query: {query}");
 
                 throw new Exception(msgBuilder.ToString());
             }

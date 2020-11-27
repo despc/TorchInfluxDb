@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using InfluxDb.Client.Read;
 using InfluxDb.Client.Write;
 using NUnit.Framework;
 
@@ -11,6 +12,7 @@ namespace InfluxDb.Test
     public class Tests
     {
         InfluxDbWriteEndpoints _writeEndpoints;
+        InfluxDbReadEndpoints _readEndpoints;
 
         [SetUp]
         public void SetUp()
@@ -30,12 +32,14 @@ namespace InfluxDb.Test
             };
 
             _writeEndpoints = new InfluxDbWriteEndpoints(config);
+            _readEndpoints = new InfluxDbReadEndpoints(config);
         }
 
         [TearDown]
         public void TearDown()
         {
             _writeEndpoints.Dispose();
+            _readEndpoints.Dispose();
         }
 
         [Test]
@@ -44,11 +48,22 @@ namespace InfluxDb.Test
             var lines = new List<string>
             {
                 // just random data
-                "foo bar=0i,baz=2 1605030124039",
+                "players_churn,player_name=ryo0ka online_time=0",
+                "players_churn,player_name=sama online_time=0",
             };
 
             // Will throw if anything went wrong
             _writeEndpoints.WriteAsync(lines).Wait();
+        }
+
+        [Test]
+        public void ReadEndpoints_Read()
+        {
+            var query = "select * from players_churn group by player_name";
+
+            // Will throw if anything went wrong
+            var result = _readEndpoints.ReadAsync(query).Result;
+            Console.WriteLine(result);
         }
     }
 }
