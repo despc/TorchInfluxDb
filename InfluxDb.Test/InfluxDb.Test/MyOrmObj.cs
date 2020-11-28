@@ -5,6 +5,8 @@ namespace InfluxDb.Test
 {
     public sealed class MyOrmObj
     {
+        [Tag("player_name")]
+        public string PlayerName { get; private set; }
 
         [Field("time")]
         public DateTime Time { get; private set; }
@@ -14,7 +16,7 @@ namespace InfluxDb.Test
 
         public override string ToString()
         {
-            return $"{nameof(Time)}: {Time}, {nameof(OnlineTime)}: {OnlineTime}";
+            return $"{nameof(PlayerName)}: {PlayerName}, {nameof(Time)}: {Time}, {nameof(OnlineTime)}: {OnlineTime}";
         }
     }
 }

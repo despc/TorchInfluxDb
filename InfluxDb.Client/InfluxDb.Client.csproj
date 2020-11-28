@@ -73,6 +73,7 @@
     <ItemGroup>
         <Compile Include="InfluxDb.Client.Orm\FieldAttribute.cs" />
         <Compile Include="InfluxDb.Client.Orm\InfluxDbOrmFactory.cs" />
+        <Compile Include="InfluxDb.Client.Orm\TagAttribute.cs" />
         <Compile Include="InfluxDb.Client.Read\IInfluxDbReadClient.cs" />
         <Compile Include="InfluxDb.Client.Read\InfluxDbSeries.cs" />
         <Compile Include="InfluxDb.Client.Read\InfluxDbReadEndpoints.cs" />

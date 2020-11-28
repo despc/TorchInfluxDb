@@ -17,33 +17,53 @@ namespace InfluxDb.Client.Orm
         public IEnumerable<T> Create<T>(InfluxDbSeries series) where T : new()
         {
             var table = series.CreateDataTable();
-            var objs = new List<T>();
-            var fields = new List<(PropertyInfo, int)>();
 
+            var ormObjects = new List<T>();
+            var fields = new List<(PropertyInfo, int)>();
+            var tags = new List<(PropertyInfo, string)>();
+
+            // Collect reflection stuff
             foreach (var propertyInfo in typeof(T).GetProperties())
             {
-                if (!TryGetAttribute<FieldAttribute>(propertyInfo, out var fieldNameAttr)) continue;
+                if (TryGetAttribute<FieldAttribute>(propertyInfo, out var fieldAttr))
+                {
+                    var fieldName = fieldAttr.FieldName;
+                    if (TryGetOrdinalByName(table.Columns, fieldName, out var ordinal))
+                    {
+                        fields.Add((propertyInfo, ordinal));
+                    }
+                }
 
-                var fieldName = fieldNameAttr.FieldName;
-                if (!TryGetOrdinalByName(table.Columns, fieldName, out var ordinal)) continue;
-
-                fields.Add((propertyInfo, ordinal));
+                if (TryGetAttribute<TagAttribute>(propertyInfo, out var tagAttr))
+                {
+                    var tagName = tagAttr.TagName;
+                    if (series.Tags.TryGetValue(tagName, out var tagValue))
+                    {
+                        tags.Add((propertyInfo, tagValue));
+                    }
+                }
             }
 
+            // Inject values
             foreach (DataRow row in table.Rows)
             {
                 var obj = new T();
 
-                foreach (var (fieldInfo, ordinal) in fields)
+                foreach (var (propertyInfo, ordinal) in fields)
                 {
                     var value = row[ordinal].ToString();
-                    SetPropertyValue(obj, fieldInfo, value);
+                    SetPropertyValue(obj, propertyInfo, value);
                 }
 
-                objs.Add(obj);
+                foreach (var (propertyInfo, tagValue) in tags)
+                {
+                    propertyInfo.SetValue(obj, tagValue);
+                }
+
+                ormObjects.Add(obj);
             }
 
-            return objs;
+            return ormObjects;
         }
 
         bool TryGetAttribute<T>(MemberInfo info, out T attribute) where T : Attribute
