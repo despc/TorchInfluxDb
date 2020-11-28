@@ -166,14 +166,14 @@ namespace InfluxDb.Client.Write
 
             firstSection.Add(_measurement);
 
-            foreach (var (key, value) in _tags)
+            foreach (var tag in _tags)
             {
-                firstSection.Add($"{key}={value}");
+                firstSection.Add($"{tag.Key}={tag.Value}");
             }
 
-            foreach (var (key, value) in _fields)
+            foreach (var field in _fields)
             {
-                secondSection.Add($"{key}={value}");
+                secondSection.Add($"{field.Key}={field.Value}");
             }
 
             return $"{string.Join(",", firstSection)} {string.Join(",", secondSection)} {_time}";

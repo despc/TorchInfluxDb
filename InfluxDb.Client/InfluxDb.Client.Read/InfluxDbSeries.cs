@@ -49,9 +49,9 @@ namespace InfluxDb.Client.Read
 
             builder.Append("Tags: ");
 
-            foreach (var (key, value) in Tags)
+            foreach (var tag in Tags)
             {
-                builder.Append($"{key} = {value}, ");
+                builder.Append($"{tag.Key} = {tag.Value}, ");
             }
 
             builder.Append("(tag end)");
