@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InfluxDb.Client.Read
 {
     public interface IInfluxDbReadClient
     {
-        //Task<InfluxDbSeries> 
+        Task<IEnumerable<T>> QueryQlAsync<T>(string query) where T : new();
     }
 }
