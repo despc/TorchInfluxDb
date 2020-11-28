@@ -88,7 +88,7 @@ namespace InfluxDb.Client.Read
 
                     foreach (var rowValues in values)
                     {
-                        var row = rowValues.Select(v => (object) v.ToString()).ToArray();
+                        var row = rowValues.Select(v => v.ToObject<object>()).ToArray();
                         table.Rows.Add(row);
                     }
 

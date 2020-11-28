@@ -54,6 +54,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="InfluxDb.Test\MyOrmObj.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="InfluxDb.Test\ConfigImpl.cs" />
         <Compile Include="InfluxDb.Test\Tests.cs" />
