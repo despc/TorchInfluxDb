@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -32,7 +31,7 @@ namespace InfluxDb.Client.Read
             _httpClient.Dispose();
         }
 
-        public async Task<IEnumerable<InfluxDbSeries>> ReadAsync(string query)
+        public async Task<IEnumerable<InfluxDbSeries>> QueryQlAsync(string query)
         {
             query.ThrowIfNull(nameof(query));
 
@@ -52,6 +51,7 @@ namespace InfluxDb.Client.Read
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
+                // Handle error
                 if (!res.IsSuccessStatusCode)
                 {
                     var msgBuilder = new StringBuilder();
@@ -75,24 +75,10 @@ namespace InfluxDb.Client.Read
                 {
                     var name = seriesToken["name"].Value<string>();
                     var tags = seriesToken["tags"].ToObject<Dictionary<string, string>>();
-                    var columns = seriesToken["columns"];
-                    var values = seriesToken["values"];
-
-                    // make table
-                    var table = new DataTable();
-
-                    foreach (var column in columns)
-                    {
-                        table.Columns.Add(column.ToString());
-                    }
-
-                    foreach (var rowValues in values)
-                    {
-                        var row = rowValues.Select(v => v.ToObject<object>()).ToArray();
-                        table.Rows.Add(row);
-                    }
-
-                    seriesList.Add(new InfluxDbSeries(name, tags, table));
+                    var columns = seriesToken["columns"].Select(c => c.ToString()).ToArray();
+                    var values = seriesToken["values"].Select(r => r.Select(v => v.ToObject<object>()).ToArray()).ToArray();
+                    var series = new InfluxDbSeries(name, tags, columns, values);
+                    seriesList.Add(series);
                 }
 
                 return seriesList;

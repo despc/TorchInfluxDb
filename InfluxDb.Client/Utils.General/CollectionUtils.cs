@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 
 namespace Utils.General
@@ -84,6 +85,11 @@ namespace Utils.General
             }
 
             return builder.ToString();
+        }
+
+        public static T[] AsArray<T>(this IEnumerable<T> self)
+        {
+            return self is T[] selfArray ? selfArray : self.ToArray();
         }
     }
 }

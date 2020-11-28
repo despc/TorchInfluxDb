@@ -10,26 +10,44 @@ namespace InfluxDb.Client.Read
         public InfluxDbSeries(
             string name,
             IReadOnlyDictionary<string, string> tags,
-            DataTable table)
+            IReadOnlyList<string> columns,
+            IReadOnlyList<IReadOnlyList<object>> values)
         {
-            name.ThrowIfNull(nameof(name));
-            tags.ThrowIfNull(nameof(tags));
-            table.ThrowIfNull(nameof(table));
-
-            Name = name;
-            Tags = tags;
-            Table = table;
+            Name = name.OrThrow(nameof(name));
+            Tags = tags.OrThrow(nameof(tags));
+            Columns = columns.OrThrow(nameof(columns));
+            Values = values.OrThrow(nameof(values));
         }
 
         public string Name { get; }
         public IReadOnlyDictionary<string, string> Tags { get; }
-        public DataTable Table { get; }
+        public IReadOnlyList<string> Columns { get; }
+        public IReadOnlyList<IReadOnlyList<object>> Values { get; }
+
+        public DataTable CreateDataTable()
+        {
+            var table = new DataTable();
+
+            foreach (var column in Columns)
+            {
+                table.Columns.Add(column);
+            }
+
+            foreach (var row in Values)
+            {
+                table.Rows.Add(row.AsArray());
+            }
+
+            return table;
+        }
 
         public override string ToString()
         {
             var builder = new StringBuilder();
 
             builder.AppendLine($"Name: {Name}");
+
+            builder.Append("Tags: ");
 
             foreach (var (key, value) in Tags)
             {
@@ -39,7 +57,8 @@ namespace InfluxDb.Client.Read
             builder.Append("(tag end)");
             builder.AppendLine();
 
-            builder.AppendLine(Table.ToStringTable());
+            var table = CreateDataTable();
+            builder.AppendLine(table.ToStringTable());
 
             return builder.ToString();
         }

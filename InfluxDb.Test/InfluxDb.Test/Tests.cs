@@ -63,14 +63,13 @@ namespace InfluxDb.Test
             var query = "select online_time from players_churn group by player_name";
 
             // Will throw if anything went wrong
-            var result = _readEndpoints.ReadAsync(query).Result;
+            var result = _readEndpoints.QueryQlAsync(query).Result;
 
             // Debugging
-            foreach (var table in result)
+            foreach (var series in result)
             {
-                Console.WriteLine(table);
-
-                foreach (var ormObj in OrmFactory.Instance.Create<MyOrmObj>(table.Table))
+                Console.WriteLine(series);
+                foreach (var ormObj in InfluxDbOrmFactory.Instance.Create<MyOrmObj>(series))
                 {
                     Console.WriteLine(ormObj);
                 }

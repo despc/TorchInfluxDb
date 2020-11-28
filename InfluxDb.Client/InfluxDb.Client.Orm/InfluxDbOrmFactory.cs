@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
+using InfluxDb.Client.Read;
 
 namespace InfluxDb.Client.Orm
 {
-    public sealed class OrmFactory
+    public sealed class InfluxDbOrmFactory
     {
-        public static readonly OrmFactory Instance = new OrmFactory();
+        public static readonly InfluxDbOrmFactory Instance = new InfluxDbOrmFactory();
 
-        OrmFactory()
+        InfluxDbOrmFactory()
         {
         }
 
-        public IEnumerable<T> Create<T>(DataTable table) where T : new()
+        public IEnumerable<T> Create<T>(InfluxDbSeries series) where T : new()
         {
+            var table = series.CreateDataTable();
             var objs = new List<T>();
             var fields = new List<(FieldInfo, int)>();
 
