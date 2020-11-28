@@ -5,11 +5,12 @@ namespace InfluxDb.Test
 {
     public sealed class MyOrmObj
     {
-        [FieldName("time")]
-        public DateTime Time { get; set; }
-        
-        [FieldName("online_time")]
-        public int OnlineTime { get; set; }
+
+        [Field("time")]
+        public DateTime Time { get; private set; }
+
+        [Field("online_time")]
+        public int OnlineTime { get; private set; }
 
         public override string ToString()
         {

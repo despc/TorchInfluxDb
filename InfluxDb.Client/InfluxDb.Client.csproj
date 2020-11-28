@@ -71,7 +71,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="InfluxDb.Client.Orm\FieldNameAttribute.cs" />
+        <Compile Include="InfluxDb.Client.Orm\FieldAttribute.cs" />
         <Compile Include="InfluxDb.Client.Orm\InfluxDbOrmFactory.cs" />
         <Compile Include="InfluxDb.Client.Read\IInfluxDbReadClient.cs" />
         <Compile Include="InfluxDb.Client.Read\InfluxDbSeries.cs" />

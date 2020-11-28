@@ -3,9 +3,9 @@
 namespace InfluxDb.Client.Orm
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class FieldNameAttribute : Attribute
+    public sealed class FieldAttribute : Attribute
     {
-        public FieldNameAttribute(string fieldName)
+        public FieldAttribute(string fieldName)
         {
             FieldName = fieldName;
         }

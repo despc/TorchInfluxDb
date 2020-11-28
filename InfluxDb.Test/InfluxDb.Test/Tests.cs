@@ -49,8 +49,8 @@ namespace InfluxDb.Test
             var lines = new List<string>
             {
                 // just random data
-                "players_churn,player_name=ryo0ka online_time=0",
-                "players_churn,player_name=sama online_time=0",
+                "players_churn,player_name=ryo0ka online_time=1",
+                "players_churn,player_name=sama online_time=1",
             };
 
             // Will throw if anything went wrong
