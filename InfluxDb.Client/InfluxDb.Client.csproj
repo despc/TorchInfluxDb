@@ -72,6 +72,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="InfluxDb.Client.Orm\FieldAttribute.cs" />
+        <Compile Include="InfluxDb.Client.Orm\IInfluxDbOrmCreator.cs" />
+        <Compile Include="InfluxDb.Client.Orm\InfluxDbOrmCreator.cs" />
         <Compile Include="InfluxDb.Client.Orm\InfluxDbOrmFactory.cs" />
         <Compile Include="InfluxDb.Client.Orm\TagAttribute.cs" />
         <Compile Include="InfluxDb.Client.Read\IInfluxDbReadClient.cs" />
@@ -88,13 +90,20 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Utils.General\AbsJsonConverter.cs" />
         <Compile Include="Utils.General\ActionDisposable.cs" />
+        <Compile Include="Utils.General\ActionQueue.cs" />
         <Compile Include="Utils.General\CollectionUtils.cs" />
         <Compile Include="Utils.General\DebugUtils.cs" />
+        <Compile Include="Utils.General\DeprecationObserver.cs" />
         <Compile Include="Utils.General\DisposableCollection.cs" />
         <Compile Include="Utils.General\DisposableUtils.cs" />
+        <Compile Include="Utils.General\LangUtils.cs" />
+        <Compile Include="Utils.General\MathUtils.cs" />
+        <Compile Include="Utils.General\ObjectPool.cs" />
+        <Compile Include="Utils.General\PersistencyObserver.cs" />
+        <Compile Include="Utils.General\ReflectionUtils.cs" />
         <Compile Include="Utils.General\StringFloatConverter.cs" />
+        <Compile Include="Utils.General\StupidDb.cs" />
         <Compile Include="Utils.General\TaskUtils.cs" />
-        <Compile Include="Utils.General\ThreadPoolTask.cs" />
         <Compile Include="Utils.General\ThreadSafeThrottle.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

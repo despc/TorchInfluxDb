@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using NLog;
 
 namespace Utils.General
@@ -16,9 +18,34 @@ namespace Utils.General
             });
         }
 
-        public static ThreadPoolTask MoveToThreadPool()
+        public static Task MoveToThreadPool(CancellationToken canceller = default)
         {
-            return new ThreadPoolTask();
+            canceller.ThrowIfCancellationRequested();
+
+            var taskSource = new TaskCompletionSource<byte>();
+
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                canceller.ThrowIfCancellationRequested();
+                taskSource.SetResult(0);
+            });
+
+            return taskSource.Task;
+        }
+
+        public static Task RunUntilCancelledAsync(this CancellationToken self, Func<CancellationToken, Task> f)
+        {
+            return Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    await f(self);
+                }
+                catch (OperationCanceledException)
+                {
+                    // ignored
+                }
+            }, self);
         }
     }
 }
