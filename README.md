@@ -7,9 +7,9 @@ Code Sample
 ---
 
 ```C#
-    using InfluxDb;
+    using InfluxDb.Torch;
     
-    InfluxDbPointFactory
+    TorchInfluxDbWriter
       .Measurement("profiler_block_types")
       .Tag("block_type", blockType.Name)
       .Field("main_ms", deltaTime)
@@ -22,7 +22,8 @@ Configuration UI
 * `Enable` -- Sends data to the InfluxDB instance.
 * `Host URL` -- URL to the the InfluxDB instance.
 * `Organization Name` -- Organization name to use when sending data to the InfluxDB instance.
-* `Authentication Token` -- Authentication token for the write access to the InfluxDB instance.
+* `Username` -- Authentication username for the write access to the InfluxDB instance.
+* `Password` -- Authentication password for the write access to the InfluxDB instance.
 * `Throttle Interval (Seconds)` -- Minimizes the number of HTTP calls using a queue.
 * `Suppress Response Errors` -- Ignores network/authentication errors.
 
