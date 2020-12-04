@@ -69,7 +69,7 @@ namespace InfluxDb.Test
             foreach (var series in result)
             {
                 Console.WriteLine(series);
-                foreach (var ormObj in InfluxDbOrmFactory.Instance.Create<MyOrmObj>(series))
+                foreach (var ormObj in InfluxDbOrmFactory.Create<MyOrmObj>(series))
                 {
                     Console.WriteLine(ormObj);
                 }

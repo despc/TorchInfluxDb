@@ -13,14 +13,14 @@ namespace InfluxDb.Client.Read
             _endpoints = endpoints;
         }
 
-        public async Task<IEnumerable<T>> QueryQlAsync<T>(string query) where T : new()
+        public async Task<IEnumerable<T>> QueryQlAsync<T>(string query) where T : class, new()
         {
             var result = new List<T>();
 
             var response = await _endpoints.QueryQlAsync(query);
             foreach (var series in response)
             {
-                var ormObjects = InfluxDbOrmFactory.Instance.Create<T>(series);
+                var ormObjects = InfluxDbOrmFactory.Create<T>(series);
                 foreach (var ormObject in ormObjects)
                 {
                     result.Add(ormObject);
