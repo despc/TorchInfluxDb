@@ -31,7 +31,7 @@ You don't need to restart Torch to apply changes.
 Specification
 ---
 
-Based on [the official Line Protocol (v2)](https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/).
+Based on [the official Line Protocol (v1.8)](https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_reference/).
 
 License
 ---
@@ -43,7 +43,7 @@ How To Set Up InfluxDB Instance
 
 This plugin alone won't store data. You will have to set up an InfluxDB instance to write data to.
 
-* Follow [the official instruction (v2)](https://docs.influxdata.com/influxdb/v2.0/get-started/)
+* Follow [the official instruction (v1.8)](https://docs.influxdata.com/influxdb/v1.8/introduction/)
 * Choose either a self-hosted or cloud-hosted instance (both work).
 * `plugin_init.message` will receive test data on plugin init. Make sure to `Enable` and not `Suppress Response Errors`.
 
