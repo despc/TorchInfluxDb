@@ -7,7 +7,7 @@
         <ProjectGuid>{7051E91B-F82C-4104-A5EA-FE4994B00774}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <AssemblyName>TorchInfluxDb</AssemblyName>
+        <AssemblyName>InfluxDb.Torch</AssemblyName>
         <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>7.3</LangVersion>
@@ -164,11 +164,11 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="TorchInfluxDb\InfluxDbCommandModule.cs" />
-        <Compile Include="TorchInfluxDb\InfluxDbPointFactory.cs" />
+        <Compile Include="InfluxDb.Torch\TorchInfluxDbCommandModule.cs" />
+        <Compile Include="InfluxDb.Torch\TorchInfluxDbWriter.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="TorchInfluxDb\InfluxDbConfig.cs" />
-        <Compile Include="TorchInfluxDb\InfluxDbPlugin.cs" />
+        <Compile Include="InfluxDb.Torch\TorchInfluxDbConfig.cs" />
+        <Compile Include="InfluxDb.Torch\TorchInfluxDbPlugin.cs" />
         <Compile Include="Utils.General\AbsJsonConverter.cs" />
         <Compile Include="Utils.General\ActionDisposable.cs" />
         <Compile Include="Utils.General\ActionQueue.cs" />

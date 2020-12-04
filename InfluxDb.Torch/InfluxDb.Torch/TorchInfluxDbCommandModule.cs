@@ -6,10 +6,10 @@ using Utils.Torch;
 using VRage.Game.ModAPI;
 using VRageMath;
 
-namespace TorchInfluxDb
+namespace InfluxDb.Torch
 {
     [Category(Category)]
-    public sealed class InfluxDbCommandModule : CommandModule
+    public sealed class TorchInfluxDbCommandModule : CommandModule
     {
         const string Category = "idb";
         const string Cmd_Write = "w";
@@ -25,7 +25,7 @@ namespace TorchInfluxDb
 
             try
             {
-                await InfluxDbPointFactory.WriteLineAsync(line);
+                await TorchInfluxDbWriter.WriteLineAsync(line);
             }
             catch (Exception e)
             {

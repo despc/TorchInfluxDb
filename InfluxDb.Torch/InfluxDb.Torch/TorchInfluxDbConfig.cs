@@ -4,9 +4,9 @@ using InfluxDb.Client.Write;
 using Torch;
 using Torch.Views;
 
-namespace TorchInfluxDb
+namespace InfluxDb.Torch
 {
-    public sealed class InfluxDbConfig :
+    public sealed class TorchInfluxDbConfig :
         ViewModel,
         IInfluxDbEndpointConfig,
         InfluxDbWriteClient.IConfig

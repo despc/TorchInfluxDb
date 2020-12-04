@@ -7,13 +7,13 @@ using Torch.API;
 using Torch.API.Plugins;
 using Utils.Torch;
 
-namespace TorchInfluxDb
+namespace InfluxDb.Torch
 {
-    public sealed class InfluxDbPlugin : TorchPluginBase, IWpfPlugin
+    public sealed class TorchInfluxDbPlugin : TorchPluginBase, IWpfPlugin
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
-        Persistent<InfluxDbConfig> _config;
+        Persistent<TorchInfluxDbConfig> _config;
         UserControl _userControl;
 
         InfluxDbWriteEndpoints _endpoints;
@@ -28,7 +28,7 @@ namespace TorchInfluxDb
             this.ListenOnGameUnloading(() => OnGameUnloading());
 
             var configFilePath = this.MakeConfigFilePath();
-            _config = Persistent<InfluxDbConfig>.Load(configFilePath);
+            _config = Persistent<TorchInfluxDbConfig>.Load(configFilePath);
             var config = _config.Data;
 
             _endpoints = new InfluxDbWriteEndpoints(config);
@@ -37,9 +37,9 @@ namespace TorchInfluxDb
             var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
             _throttledWriteClient = new ThrottledInfluxDbWriteClient(_writeClient, interval);
 
-            InfluxDbPointFactory.WriteEndpoints = _endpoints;
-            InfluxDbPointFactory.WriteClient = _throttledWriteClient;
-            InfluxDbPointFactory.Enabled = config.Enable;
+            TorchInfluxDbWriter.WriteEndpoints = _endpoints;
+            TorchInfluxDbWriter.WriteClient = _throttledWriteClient;
+            TorchInfluxDbWriter.Enabled = config.Enable;
 
             config.PropertyChanged += (_, __) => OnConfigUpdated();
 
@@ -55,7 +55,7 @@ namespace TorchInfluxDb
         {
             var config = _config.Data;
 
-            InfluxDbPointFactory.Enabled = config.Enable;
+            TorchInfluxDbWriter.Enabled = config.Enable;
 
             _throttledWriteClient.SetRunning(config.Enable);
 

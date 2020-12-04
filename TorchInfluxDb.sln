@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchInfluxDb", "TorchInfluxDb\TorchInfluxDb.csproj", "{7051E91B-F82C-4104-A5EA-FE4994B00774}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfluxDb.Torch", "InfluxDb.Torch\InfluxDb.Torch.csproj", "{7051E91B-F82C-4104-A5EA-FE4994B00774}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfluxDb.Client", "InfluxDb.Client\InfluxDb.Client.csproj", "{918B30B1-4ADC-4E41-B33E-3019361398F7}"
 EndProject

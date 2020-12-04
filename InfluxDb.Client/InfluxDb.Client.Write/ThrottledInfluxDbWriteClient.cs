@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using NLog;
 using Utils.General;
 
@@ -11,7 +10,7 @@ namespace InfluxDb.Client.Write
     /// Holds onto points until the next time interval.
     /// Reduces the number of HTTP calls.
     /// </summary>
-    public sealed class ThrottledInfluxDbWriteClient : IInfluxDbWriteClient
+    public sealed class ThrottledInfluxDbWriteClient
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
@@ -27,7 +26,7 @@ namespace InfluxDb.Client.Write
                 ps => OnThrottleFlush(ps));
         }
 
-        public Task WriteAsync(IEnumerable<InfluxDbPoint> points)
+        public void Write(IEnumerable<InfluxDbPoint> points)
         {
             points.ThrowIfNull(nameof(points));
 
@@ -36,17 +35,13 @@ namespace InfluxDb.Client.Write
                 point.ThrowIfNull(nameof(point));
                 _throttle.Add(point);
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task WriteAsync(InfluxDbPoint point)
+        public void Write(InfluxDbPoint point)
         {
             point.ThrowIfNull(nameof(point));
 
             _throttle.Add(point);
-
-            return Task.CompletedTask;
         }
 
         void OnThrottleFlush(IEnumerable<InfluxDbPoint> points)
