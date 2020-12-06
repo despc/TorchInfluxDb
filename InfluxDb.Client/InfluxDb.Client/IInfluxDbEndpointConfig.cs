@@ -4,7 +4,7 @@
     {
         string HostUrl { get; }
         string Bucket { get; }
-        string Username { get; }
-        string Password { get; }
+        string Organization { get; }
+        string AuthenticationToken { get; }
     }
 }

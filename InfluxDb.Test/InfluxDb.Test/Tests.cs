@@ -28,8 +28,8 @@ namespace InfluxDb.Test
             {
                 HostUrl = "http://localhost:8086",
                 Bucket = "gaalsien", // This bucket must be present in the DB instance
-                Username = "",
-                Password = ""
+                Organization = "whatever",
+                AuthenticationToken = null,
             };
 
             _writeEndpoints = new InfluxDbWriteEndpoints(config);
