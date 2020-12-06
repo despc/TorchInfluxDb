@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NLog;
 using Utils.General;
 
 namespace InfluxDb.Client.Write
@@ -11,6 +12,7 @@ namespace InfluxDb.Client.Write
     // https://docs.influxdata.com/influxdb/v2.0/write-data/developer-tools/api/
     public sealed class InfluxDbWriteEndpoints : IDisposable
     {
+        static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         readonly IInfluxDbEndpointConfig _config;
         readonly HttpClient _httpClient;
         readonly CancellationTokenSource _cancellationTokenSource;
@@ -37,6 +39,8 @@ namespace InfluxDb.Client.Write
             {
                 line.ThrowIfNullOrEmpty(nameof(line));
             }
+
+            Log.Debug($"Writing: URL: \"{_config.HostUrl}\", Organization: \"{_config.Organization}\", Bucket: \"{_config.Bucket}\"");
 
             _config.HostUrl.ThrowIfNullOrEmpty(nameof(_config.HostUrl));
             _config.Organization.ThrowIfNullOrEmpty(nameof(_config.Organization));
@@ -78,6 +82,8 @@ namespace InfluxDb.Client.Write
 
                     throw new Exception(msgBuilder.ToString());
                 }
+
+                Log.Debug("Finished writing");
             }
         }
     }

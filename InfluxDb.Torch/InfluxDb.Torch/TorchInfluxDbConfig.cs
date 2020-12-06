@@ -37,20 +37,20 @@ namespace InfluxDb.Torch
             set => SetValue(ref _hostUrl, value);
         }
 
-        [XmlElement("Bucket")]
-        [Display(Order = 3, Name = "Bucket Name", GroupName = GroupName)]
-        public string Bucket
-        {
-            get => _bucket;
-            set => SetValue(ref _bucket, value);
-        }
-
         [XmlElement("Organization")]
-        [Display(Order = 4, Name = "Organization", GroupName = GroupName)]
+        [Display(Order = 3, Name = "Organization", GroupName = GroupName)]
         public string Organization
         {
             get => _organization;
             set => SetValue(ref _organization, value);
+        }
+
+        [XmlElement("Bucket")]
+        [Display(Order = 4, Name = "Bucket Name", GroupName = GroupName)]
+        public string Bucket
+        {
+            get => _bucket;
+            set => SetValue(ref _bucket, value);
         }
 
         [XmlElement("AuthenticationToken")]
