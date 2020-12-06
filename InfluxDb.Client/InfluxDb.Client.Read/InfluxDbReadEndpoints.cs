@@ -39,15 +39,15 @@ namespace InfluxDb.Client.Read
             _config.Bucket.ThrowIfNullOrEmpty(nameof(_config.Bucket));
 
             var urlEncodedQuery = WebUtility.UrlEncode(query);
-            var url = $"{_config.HostUrl}/query?db={_config.Bucket}&q={urlEncodedQuery}&precision=ms";
-
-            // authenticate
-            if (!string.IsNullOrEmpty(_config.Username) && !string.IsNullOrEmpty(_config.Password))
-            {
-                url += $"&u={_config.Username}&p={_config.Password}";
-            }
+            var url = $"{_config.HostUrl}/query?org={_config.Organization}&bucket={_config.Bucket}&q={urlEncodedQuery}&precision=ms";
 
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
+            // authenticate
+            if (!string.IsNullOrEmpty(_config.AuthenticationToken))
+            {
+                req.Headers.TryAddWithoutValidation("Authorization", $"Token {_config.AuthenticationToken}");
+            }
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
@@ -59,30 +59,39 @@ namespace InfluxDb.Client.Read
                     msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
                     msgBuilder.AppendLine($"Host URL: {_config.HostUrl}");
                     msgBuilder.AppendLine($"Bucket: {_config.Bucket}");
-                    msgBuilder.AppendLine($"Username: {_config.Username ?? "<empty>"}");
-                    msgBuilder.AppendLine($"Password: {_config.Password ?? "<empty>"}");
+                    msgBuilder.AppendLine($"Organization: {_config.Organization}");
                     msgBuilder.AppendLine($"Query: {query}");
+
+                    if (_config.AuthenticationToken != null)
+                    {
+                        msgBuilder.AppendLine($"Authentication Token: {_config.AuthenticationToken.HideCredential(4)}");
+                    }
 
                     throw new Exception(msgBuilder.ToString());
                 }
 
                 var contentText = await res.Content.ReadAsStringAsync();
-                var contentToken = JToken.Parse(contentText);
-
-                var seriesList = new List<InfluxDbSeries>();
-                foreach (var resultToken in contentToken["results"])
-                foreach (var seriesToken in resultToken["series"])
-                {
-                    var name = seriesToken["name"].Value<string>();
-                    var tags = seriesToken["tags"].ToObject<Dictionary<string, string>>();
-                    var columns = seriesToken["columns"].Select(c => c.ToString()).ToArray();
-                    var values = seriesToken["values"].Select(r => r.Select(v => v.ToObject<object>()).ToArray()).ToArray();
-                    var series = new InfluxDbSeries(name, tags, columns, values);
-                    seriesList.Add(series);
-                }
-
-                return seriesList;
+                return DeserializeResult(contentText);
             }
+        }
+
+        IEnumerable<InfluxDbSeries> DeserializeResult(string contentText)
+        {
+            var contentToken = JToken.Parse(contentText);
+
+            var seriesList = new List<InfluxDbSeries>();
+            foreach (var resultToken in contentToken["results"])
+            foreach (var seriesToken in resultToken["series"])
+            {
+                var name = seriesToken["name"].Value<string>();
+                var tags = seriesToken["tags"].ToObject<Dictionary<string, string>>();
+                var columns = seriesToken["columns"].Select(c => c.ToString()).ToArray();
+                var values = seriesToken["values"].Select(r => r.Select(v => v.ToObject<object>()).ToArray()).ToArray();
+                var series = new InfluxDbSeries(name, tags, columns, values);
+                seriesList.Add(series);
+            }
+
+            return seriesList;
         }
     }
 }

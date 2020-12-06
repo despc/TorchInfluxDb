@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using NLog;
 using Utils.General;
@@ -46,6 +47,9 @@ namespace InfluxDb.Client.Write
 
         void OnThrottleFlush(IEnumerable<InfluxDbPoint> points)
         {
+            // don't send if empty
+            if (!points.Any()) return;
+
             _self.WriteAsync(points).Forget(Log);
         }
 
@@ -65,7 +69,7 @@ namespace InfluxDb.Client.Write
         {
             if (!_throttle.Start())
             {
-                Log.Warn("Aborted; failed to start");
+                Log.Warn("Aborted starting; already started");
             }
         }
 
@@ -73,7 +77,7 @@ namespace InfluxDb.Client.Write
         {
             if (!_throttle.Stop())
             {
-                Log.Warn("Aborted; failed to stop");
+                Log.Warn("Aborted stopping; not running");
                 return;
             }
 

@@ -16,8 +16,8 @@ namespace InfluxDb.Torch
         bool _enable;
         string _hostUrl = "http://localhost:8086";
         string _bucket = "test";
-        string _username = "";
-        string _password = "";
+        string _organization = "";
+        string _authenticationToken = "";
         float _writeIntervalSecs = 10;
         bool _suppressResponseError;
 
@@ -26,7 +26,7 @@ namespace InfluxDb.Torch
         public bool Enable
         {
             get => _enable;
-            set => SetProperty(ref _enable, value);
+            set => SetValue(ref _enable, value);
         }
 
         [XmlElement("HostUrl")]
@@ -34,31 +34,31 @@ namespace InfluxDb.Torch
         public string HostUrl
         {
             get => _hostUrl;
-            set => SetProperty(ref _hostUrl, value);
+            set => SetValue(ref _hostUrl, value);
+        }
+
+        [XmlElement("Organization")]
+        [Display(Order = 3, Name = "Organization", GroupName = GroupName)]
+        public string Organization
+        {
+            get => _organization;
+            set => SetValue(ref _organization, value);
         }
 
         [XmlElement("Bucket")]
-        [Display(Order = 3, Name = "Bucket Name", GroupName = GroupName)]
+        [Display(Order = 4, Name = "Bucket Name", GroupName = GroupName)]
         public string Bucket
         {
             get => _bucket;
-            set => SetProperty(ref _bucket, value);
+            set => SetValue(ref _bucket, value);
         }
 
-        [XmlElement("Username")]
-        [Display(Order = 4, Name = "Username (Optional)", GroupName = GroupName)]
-        public string Username
+        [XmlElement("AuthenticationToken")]
+        [Display(Order = 5, Name = "Authentication Token (Optional)", GroupName = GroupName)]
+        public string AuthenticationToken
         {
-            get => _username;
-            set => SetProperty(ref _username, value);
-        }
-
-        [XmlElement("Password")]
-        [Display(Order = 5, Name = "Password (Optional)", GroupName = GroupName)]
-        public string Password
-        {
-            get => _password;
-            set => SetProperty(ref _password, value);
+            get => _authenticationToken;
+            set => SetValue(ref _authenticationToken, value);
         }
 
         [XmlElement("SuppressResponseError")]
@@ -66,7 +66,7 @@ namespace InfluxDb.Torch
         public bool SuppressResponseError
         {
             get => _suppressResponseError;
-            set => SetProperty(ref _suppressResponseError, value);
+            set => SetValue(ref _suppressResponseError, value);
         }
 
         [XmlElement("WriteIntervalSecs")]
@@ -74,14 +74,7 @@ namespace InfluxDb.Torch
         public float WriteIntervalSecs
         {
             get => _writeIntervalSecs;
-            set => SetProperty(ref _writeIntervalSecs, value);
-        }
-
-        // ReSharper disable once RedundantAssignment
-        void SetProperty<T>(ref T field, T value)
-        {
-            field = value;
-            OnPropertyChanged();
+            set => SetValue(ref _writeIntervalSecs, value);
         }
     }
 }
