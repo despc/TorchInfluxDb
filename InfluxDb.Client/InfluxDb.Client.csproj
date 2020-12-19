@@ -86,6 +86,7 @@
         <Compile Include="Utils.General\DeprecationObserver.cs" />
         <Compile Include="Utils.General\DisposableCollection.cs" />
         <Compile Include="Utils.General\DisposableUtils.cs" />
+        <Compile Include="Utils.General\HttpUtils.cs" />
         <Compile Include="Utils.General\LangUtils.cs" />
         <Compile Include="Utils.General\MathUtils.cs" />
         <Compile Include="Utils.General\ObjectPool.cs" />

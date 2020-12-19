@@ -39,7 +39,13 @@ namespace InfluxDb.Client.Read
             _config.Bucket.ThrowIfNullOrEmpty(nameof(_config.Bucket));
 
             var urlEncodedQuery = WebUtility.UrlEncode(query);
-            var url = $"{_config.HostUrl}/query?org={_config.Organization}&bucket={_config.Bucket}&q={urlEncodedQuery}&precision=ms";
+            var url = HttpUtils.MakeUrl(_config.HostUrl, "query", new Dictionary<string, string>
+            {
+                {"org", _config.Organization},
+                {"bucket", _config.Bucket},
+                {"precision", "ms"},
+                {"q", urlEncodedQuery},
+            });
 
             var req = new HttpRequestMessage(HttpMethod.Get, url);
 

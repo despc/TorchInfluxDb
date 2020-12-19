@@ -40,13 +40,19 @@ namespace InfluxDb.Client.Write
                 line.ThrowIfNullOrEmpty(nameof(line));
             }
 
-            Log.Debug($"Writing: URL: \"{_config.HostUrl}\", Organization: \"{_config.Organization}\", Bucket: \"{_config.Bucket}\"");
-
             _config.HostUrl.ThrowIfNullOrEmpty(nameof(_config.HostUrl));
             _config.Organization.ThrowIfNullOrEmpty(nameof(_config.Organization));
             _config.Bucket.ThrowIfNullOrEmpty(nameof(_config.Bucket));
 
-            var url = $"{_config.HostUrl}/api/v2/write?org={_config.Organization}&bucket={_config.Bucket}&precision=ms";
+            var url = HttpUtils.MakeUrl(_config.HostUrl, "api/v2/write", new Dictionary<string, string>
+            {
+                {"org", _config.Organization},
+                {"bucket", _config.Bucket},
+                {"precision", "ms"},
+            });
+
+            Log.Debug($"Writing: URL: \"{url}\"");
+
             var req = new HttpRequestMessage(HttpMethod.Post, url);
 
             var content = string.Join("\n", lines);
