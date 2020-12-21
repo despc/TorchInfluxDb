@@ -8,7 +8,7 @@ namespace InfluxDb.Torch
 {
     public sealed class TorchInfluxDbConfig :
         ViewModel,
-        IInfluxDbEndpointConfig,
+        IInfluxDbAuthConfig,
         InfluxDbWriteClient.IConfig
     {
         const string GroupName = "InfluxDB";

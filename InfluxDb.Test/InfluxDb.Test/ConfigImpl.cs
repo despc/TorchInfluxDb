@@ -2,7 +2,7 @@
 
 namespace InfluxDb.Test
 {
-    public sealed class ConfigImpl : IInfluxDbEndpointConfig
+    public sealed class ConfigImpl : IInfluxDbAuthConfig
     {
         public string HostUrl { get; set; }
         public string Bucket { get; set; }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -13,13 +12,13 @@ namespace InfluxDb.Client.Read
 {
     public sealed class InfluxDbReadEndpoints : IDisposable
     {
-        readonly IInfluxDbEndpointConfig _config;
+        readonly InfluxDbAuth _auth;
         readonly HttpClient _httpClient;
         readonly CancellationTokenSource _cancellationTokenSource;
 
-        public InfluxDbReadEndpoints(IInfluxDbEndpointConfig config)
+        public InfluxDbReadEndpoints(InfluxDbAuth auth)
         {
-            _config = config;
+            _auth = auth;
             _httpClient = new HttpClient();
             _cancellationTokenSource = new CancellationTokenSource();
         }
@@ -35,25 +34,15 @@ namespace InfluxDb.Client.Read
         {
             query.ThrowIfNull(nameof(query));
 
-            _config.HostUrl.ThrowIfNullOrEmpty(nameof(_config.HostUrl));
-            _config.Bucket.ThrowIfNullOrEmpty(nameof(_config.Bucket));
+            _auth.ValidateOrThrow();
 
-            var urlEncodedQuery = WebUtility.UrlEncode(query);
-            var url = HttpUtils.MakeUrl(_config.HostUrl, "query", new Dictionary<string, string>
-            {
-                {"org", _config.Organization},
-                {"bucket", _config.Bucket},
-                {"precision", "ms"},
-                {"q", urlEncodedQuery},
-            });
+            var urlBuilder = _auth.MakeHttpUrlBuilder();
+            urlBuilder.SetPath("query");
+            urlBuilder.AddArgument("precision", "ms");
+            urlBuilder.AddArgument("q", query);
 
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-
-            // authenticate
-            if (!string.IsNullOrEmpty(_config.AuthenticationToken))
-            {
-                req.Headers.TryAddWithoutValidation("Authorization", $"Token {_config.AuthenticationToken}");
-            }
+            var req = new HttpRequestMessage(HttpMethod.Get, urlBuilder.ToUri());
+            _auth.AuthenticateHttpRequest(req);
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
@@ -63,15 +52,8 @@ namespace InfluxDb.Client.Read
                     var msgBuilder = new StringBuilder();
 
                     msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
-                    msgBuilder.AppendLine($"Host URL: {_config.HostUrl}");
-                    msgBuilder.AppendLine($"Bucket: {_config.Bucket}");
-                    msgBuilder.AppendLine($"Organization: {_config.Organization}");
+                    msgBuilder.AppendLine($"{_auth}");
                     msgBuilder.AppendLine($"Query: {query}");
-
-                    if (_config.AuthenticationToken != null)
-                    {
-                        msgBuilder.AppendLine($"Authentication Token: {_config.AuthenticationToken.HideCredential(4)}");
-                    }
 
                     throw new Exception(msgBuilder.ToString());
                 }

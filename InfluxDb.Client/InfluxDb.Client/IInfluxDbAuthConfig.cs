@@ -1,6 +1,6 @@
 ﻿namespace InfluxDb.Client
 {
-    public interface IInfluxDbEndpointConfig
+    public interface IInfluxDbAuthConfig
     {
         string HostUrl { get; }
         string Bucket { get; }
