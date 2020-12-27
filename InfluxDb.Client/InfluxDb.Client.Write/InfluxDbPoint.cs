@@ -40,7 +40,7 @@ namespace InfluxDb.Client.Write
         public InfluxDbPoint Tag(string key, string value)
         {
             key.ThrowIfNullOrEmpty(nameof(key));
-            value.ThrowIfNull(nameof(value));
+            value.ThrowIfNullOrEmpty(nameof(value));
             AssertNamingRestriction(key);
             key = InfluxDbEscapeHandler.HandleTagKey(key);
             value = InfluxDbEscapeHandler.HandleTagValue(value);
