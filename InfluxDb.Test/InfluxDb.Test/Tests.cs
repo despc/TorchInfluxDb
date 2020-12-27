@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using InfluxDb.Client;
 using InfluxDb.Client.Orm;
 using InfluxDb.Client.Read;
 using InfluxDb.Client.Write;
@@ -32,8 +33,9 @@ namespace InfluxDb.Test
                 AuthenticationToken = null,
             };
 
-            _writeEndpoints = new InfluxDbWriteEndpoints(config);
-            _readEndpoints = new InfluxDbReadEndpoints(config);
+            var auth = new InfluxDbAuth(config);
+            _writeEndpoints = new InfluxDbWriteEndpoints(auth);
+            _readEndpoints = new InfluxDbReadEndpoints(auth);
         }
 
         [TearDown]

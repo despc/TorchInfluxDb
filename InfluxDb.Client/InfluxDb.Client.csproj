@@ -76,7 +76,8 @@
         <Compile Include="InfluxDb.Client.Write\InfluxDbWriteClient.cs" />
         <Compile Include="InfluxDb.Client.Write\InfluxDbWriteEndpoints.cs" />
         <Compile Include="InfluxDb.Client.Write\ThrottledInfluxDbWriteClient.cs" />
-        <Compile Include="InfluxDb.Client\IInfluxDbEndpointConfig.cs" />
+        <Compile Include="InfluxDb.Client\IInfluxDbAuthConfig.cs" />
+        <Compile Include="InfluxDb.Client\InfluxDbAuth.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Utils.General\AbsJsonConverter.cs" />
         <Compile Include="Utils.General\ActionDisposable.cs" />
@@ -86,6 +87,7 @@
         <Compile Include="Utils.General\DeprecationObserver.cs" />
         <Compile Include="Utils.General\DisposableCollection.cs" />
         <Compile Include="Utils.General\DisposableUtils.cs" />
+        <Compile Include="Utils.General\HttpUrlBuilder.cs" />
         <Compile Include="Utils.General\LangUtils.cs" />
         <Compile Include="Utils.General\MathUtils.cs" />
         <Compile Include="Utils.General\ObjectPool.cs" />

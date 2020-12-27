@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using NLog;
 using Utils.General;
 
@@ -39,7 +40,7 @@ namespace InfluxDb.Client.Write
         public InfluxDbPoint Tag(string key, string value)
         {
             key.ThrowIfNullOrEmpty(nameof(key));
-            value.ThrowIfNull(nameof(value));
+            value.ThrowIfNullOrEmpty(nameof(value));
             AssertNamingRestriction(key);
             key = InfluxDbEscapeHandler.HandleTagKey(key);
             value = InfluxDbEscapeHandler.HandleTagValue(value);
@@ -70,6 +71,8 @@ namespace InfluxDb.Client.Write
             AssertNamingRestriction(key);
             key = InfluxDbEscapeHandler.HandleFieldKey(key);
             value = InfluxDbEscapeHandler.HandleFieldValue(value);
+
+            value = EscapeUnicode(value);
 
             var valueStr = $"\"{value}\"";
             AddFieldRaw(key, valueStr);
@@ -192,6 +195,22 @@ namespace InfluxDb.Client.Write
         static string TimeToString(DateTime time)
         {
             return $"{(long) ((time - new DateTime(1970, 1, 1)).TotalSeconds * 1000)}";
+        }
+
+        //https://stackoverflow.com/questions/1615559
+        static string EscapeUnicode(string value)
+        {
+            var strBuilder = new StringBuilder();
+            foreach (var utf8Char in value)
+            {
+                var asciiChar = utf8Char > 127
+                    ? $"{(int) utf8Char:x4}"
+                    : $"{utf8Char}";
+
+                strBuilder.Append(asciiChar);
+            }
+
+            return strBuilder.ToString();
         }
     }
 }

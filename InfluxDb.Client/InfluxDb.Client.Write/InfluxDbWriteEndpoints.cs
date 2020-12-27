@@ -13,13 +13,13 @@ namespace InfluxDb.Client.Write
     public sealed class InfluxDbWriteEndpoints : IDisposable
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
-        readonly IInfluxDbEndpointConfig _config;
+        readonly InfluxDbAuth _auth;
         readonly HttpClient _httpClient;
         readonly CancellationTokenSource _cancellationTokenSource;
 
-        public InfluxDbWriteEndpoints(IInfluxDbEndpointConfig config)
+        public InfluxDbWriteEndpoints(InfluxDbAuth auth)
         {
-            _config = config;
+            _auth = auth;
             _httpClient = new HttpClient();
             _cancellationTokenSource = new CancellationTokenSource();
         }
@@ -34,28 +34,26 @@ namespace InfluxDb.Client.Write
         public async Task WriteAsync(IReadOnlyCollection<string> lines)
         {
             lines.ThrowIfNull(nameof(lines));
+            _auth.ValidateOrThrow();
 
             foreach (var line in lines)
             {
                 line.ThrowIfNullOrEmpty(nameof(line));
             }
 
-            Log.Debug($"Writing: URL: \"{_config.HostUrl}\", Organization: \"{_config.Organization}\", Bucket: \"{_config.Bucket}\"");
+            var urlBuilder = _auth.MakeHttpUrlBuilder();
+            urlBuilder.SetPath("api/v2/write");
+            urlBuilder.AddArgument("precision", "ms");
 
-            _config.HostUrl.ThrowIfNullOrEmpty(nameof(_config.HostUrl));
-            _config.Organization.ThrowIfNullOrEmpty(nameof(_config.Organization));
-            _config.Bucket.ThrowIfNullOrEmpty(nameof(_config.Bucket));
+            var url = urlBuilder.ToUri();
 
-            var url = $"{_config.HostUrl}/api/v2/write?org={_config.Organization}&bucket={_config.Bucket}&precision=ms";
+            Log.Debug($"Writing: URL: \"{url}\"");
+
             var req = new HttpRequestMessage(HttpMethod.Post, url);
+            _auth.AuthenticateHttpRequest(req);
 
             var content = string.Join("\n", lines);
             req.Content = new StringContent(content);
-
-            if (!string.IsNullOrEmpty(_config.AuthenticationToken))
-            {
-                req.Headers.TryAddWithoutValidation("Authorization", $"Token {_config.AuthenticationToken}");
-            }
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
@@ -64,15 +62,7 @@ namespace InfluxDb.Client.Write
                     var msgBuilder = new StringBuilder();
 
                     msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
-                    msgBuilder.AppendLine($"Host URL: {_config.HostUrl}");
-                    msgBuilder.AppendLine($"Bucket: {_config.Bucket}");
-                    msgBuilder.AppendLine($"Organization: {_config.Organization}");
-
-                    if (_config.AuthenticationToken != null)
-                    {
-                        msgBuilder.AppendLine($"Authentication Token: {_config.AuthenticationToken.HideCredential(4)}");
-                    }
-
+                    msgBuilder.AppendLine($"{_auth}");
                     msgBuilder.AppendLine($"Content ({lines.Count} lines): ");
 
                     foreach (var line in lines)

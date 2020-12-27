@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
+using InfluxDb.Client;
 using InfluxDb.Client.Write;
 using NLog;
 using Torch;
@@ -31,7 +32,8 @@ namespace InfluxDb.Torch
             _config = Persistent<TorchInfluxDbConfig>.Load(configFilePath);
             var config = _config.Data;
 
-            _endpoints = new InfluxDbWriteEndpoints(config);
+            var auth = new InfluxDbAuth(config);
+            _endpoints = new InfluxDbWriteEndpoints(auth);
             _writeClient = new InfluxDbWriteClient(_endpoints, config);
 
             var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
