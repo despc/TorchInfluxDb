@@ -8,19 +8,12 @@ namespace InfluxDb.Client.Write
 {
     public sealed class InfluxDbWriteClient : IInfluxDbWriteClient
     {
-        public interface IConfig
-        {
-            bool SuppressResponseError { get; }
-        }
-
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         readonly InfluxDbWriteEndpoints _endpoints;
-        readonly IConfig _config;
 
-        public InfluxDbWriteClient(InfluxDbWriteEndpoints endpoints, IConfig config)
+        public InfluxDbWriteClient(InfluxDbWriteEndpoints endpoints)
         {
             _endpoints = endpoints;
-            _config = config;
         }
 
         public Task WriteAsync(IEnumerable<InfluxDbPoint> points)
@@ -43,8 +36,6 @@ namespace InfluxDb.Client.Write
             }
             catch (Exception e)
             {
-                if (_config.SuppressResponseError) return;
-
                 Log.Error(e.Message);
             }
         }
