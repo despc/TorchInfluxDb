@@ -1,6 +1,5 @@
 ﻿using System.Xml.Serialization;
 using InfluxDb.Client;
-using InfluxDb.Client.Write;
 using Torch;
 using Torch.Views;
 
@@ -9,9 +8,10 @@ namespace InfluxDb.Torch
     public sealed class TorchInfluxDbConfig :
         ViewModel,
         IInfluxDbAuthConfig,
-        InfluxDbWriteClient.IConfig
+        TorchInfluxDbLoggingConfigurator.IConfig
     {
-        const string GroupName = "InfluxDB";
+        const string OperationGroupName = "Operation";
+        const string CredentialsGroupName = "Credentials";
 
         bool _enable;
         string _hostUrl = "http://localhost:8086";
@@ -19,10 +19,12 @@ namespace InfluxDb.Torch
         string _organization = "";
         string _authenticationToken = "";
         float _writeIntervalSecs = 10;
-        bool _suppressResponseError;
+        string _logFilePath = TorchInfluxDbLoggingConfigurator.DefaultLogFilePath;
+        bool _suppressWpfOutput;
+        bool _enableLoggingTrace;
 
         [XmlElement("Enable")]
-        [Display(Order = 0, Name = "Enable", GroupName = GroupName)]
+        [Display(Order = 0, Name = "Enable", GroupName = OperationGroupName)]
         public bool Enable
         {
             get => _enable;
@@ -30,7 +32,7 @@ namespace InfluxDb.Torch
         }
 
         [XmlElement("HostUrl")]
-        [Display(Order = 2, Name = "Host URL", GroupName = GroupName)]
+        [Display(Order = 2, Name = "Host URL", GroupName = CredentialsGroupName)]
         public string HostUrl
         {
             get => _hostUrl;
@@ -38,7 +40,7 @@ namespace InfluxDb.Torch
         }
 
         [XmlElement("Organization")]
-        [Display(Order = 3, Name = "Organization", GroupName = GroupName)]
+        [Display(Order = 3, Name = "Organization", GroupName = CredentialsGroupName)]
         public string Organization
         {
             get => _organization;
@@ -46,7 +48,7 @@ namespace InfluxDb.Torch
         }
 
         [XmlElement("Bucket")]
-        [Display(Order = 4, Name = "Bucket Name", GroupName = GroupName)]
+        [Display(Order = 4, Name = "Bucket Name", GroupName = CredentialsGroupName)]
         public string Bucket
         {
             get => _bucket;
@@ -54,27 +56,43 @@ namespace InfluxDb.Torch
         }
 
         [XmlElement("AuthenticationToken")]
-        [Display(Order = 5, Name = "Authentication Token (Optional)", GroupName = GroupName)]
+        [Display(Order = 5, Name = "Authentication Token (Optional)", GroupName = CredentialsGroupName)]
         public string AuthenticationToken
         {
             get => _authenticationToken;
             set => SetValue(ref _authenticationToken, value);
         }
 
-        [XmlElement("SuppressResponseError")]
-        [Display(Order = 8, Name = "Suppress Response Errors", GroupName = GroupName)]
-        public bool SuppressResponseError
-        {
-            get => _suppressResponseError;
-            set => SetValue(ref _suppressResponseError, value);
-        }
-
         [XmlElement("WriteIntervalSecs")]
-        [Display(Order = 7, Name = "Throttle Interval (Seconds)", GroupName = GroupName)]
+        [Display(Order = 7, Name = "Throttle Interval (Seconds)", GroupName = OperationGroupName)]
         public float WriteIntervalSecs
         {
             get => _writeIntervalSecs;
             set => SetValue(ref _writeIntervalSecs, value);
+        }
+
+        [XmlElement("LogFilePath")]
+        [Display(Order = 8, Name = "Log File Path", GroupName = OperationGroupName)]
+        public string LogFilePath
+        {
+            get => _logFilePath;
+            set => SetValue(ref _logFilePath, value);
+        }
+
+        [XmlElement("SuppressWpfOutput")]
+        [Display(Order = 9, Name = "Suppress Console Output", GroupName = OperationGroupName)]
+        public bool SuppressWpfOutput
+        {
+            get => _suppressWpfOutput;
+            set => SetValue(ref _suppressWpfOutput, value);
+        }
+
+        [XmlElement("EnableLoggingTrace")]
+        [Display(Order = 10, Name = "Enable Logging Trace", GroupName = OperationGroupName)]
+        public bool EnableLoggingTrace
+        {
+            get => _enableLoggingTrace;
+            set => SetValue(ref _enableLoggingTrace, value);
         }
     }
 }

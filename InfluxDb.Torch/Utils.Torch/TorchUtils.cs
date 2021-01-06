@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using NLog;
+using NLog.Targets;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.Commands;
@@ -20,6 +23,11 @@ namespace Utils.Torch
 
                 yield return node.Command;
             }
+        }
+
+        public static Target GetWpfTarget()
+        {
+            return LogManager.Configuration.AllTargets.First(t => t.Name == "wpf");
         }
     }
 }

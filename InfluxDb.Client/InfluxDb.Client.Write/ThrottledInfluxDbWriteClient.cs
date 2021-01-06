@@ -47,6 +47,8 @@ namespace InfluxDb.Client.Write
 
         void OnThrottleFlush(IEnumerable<InfluxDbPoint> points)
         {
+            Log.Trace($"writing={points.Any()}");
+            
             // don't send if empty
             if (!points.Any()) return;
 

@@ -14,7 +14,7 @@ namespace InfluxDb.Torch
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         internal static InfluxDbWriteEndpoints WriteEndpoints { private get; set; }
         internal static ThrottledInfluxDbWriteClient WriteClient { private get; set; }
-        internal static bool Enabled { private get; set; }
+        internal static bool Enabled { get; set; }
 
         public static InfluxDbPoint Measurement(string measurement)
         {
@@ -28,6 +28,15 @@ namespace InfluxDb.Torch
             return point;
         }
 
+        public static void Write(this InfluxDbPoint point)
+        {
+            point.ThrowIfNull(nameof(point));
+            WriteClient.ThrowIfNull("Integration not initialized");
+            if (!Enabled) return;
+
+            WriteClient.Write(point);
+        }
+
         public static async Task WriteLineAsync(string line)
         {
             line.ThrowIfNullOrEmpty(nameof(line));
@@ -38,15 +47,6 @@ namespace InfluxDb.Torch
             }
 
             await WriteEndpoints.WriteAsync(new[] {line});
-        }
-
-        public static void Write(this InfluxDbPoint point)
-        {
-            point.ThrowIfNull(nameof(point));
-            WriteClient.ThrowIfNull("Integration not initialized");
-            if (!Enabled) return;
-
-            WriteClient.Write(point);
         }
     }
 }
