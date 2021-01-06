@@ -2,16 +2,19 @@
 using InfluxDb.Client;
 using Torch;
 using Torch.Views;
+using Utils.General;
 
 namespace InfluxDb.Torch
 {
     public sealed class TorchInfluxDbConfig :
         ViewModel,
         IInfluxDbAuthConfig,
-        TorchInfluxDbLoggingConfigurator.IConfig
+        FileLoggingConfigurator.IConfig
     {
         const string OperationGroupName = "Operation";
         const string CredentialsGroupName = "Credentials";
+        
+        public const string DefaultLogFilePath = "Logs/InfluxDb-${shortdate}.log";
 
         bool _enable;
         string _hostUrl = "http://localhost:8086";
@@ -19,7 +22,7 @@ namespace InfluxDb.Torch
         string _organization = "";
         string _authenticationToken = "";
         float _writeIntervalSecs = 10;
-        string _logFilePath = TorchInfluxDbLoggingConfigurator.DefaultLogFilePath;
+        string _logFilePath = DefaultLogFilePath;
         bool _suppressWpfOutput;
         bool _enableLoggingTrace;
 

@@ -3,9 +3,9 @@ using NLog.Config;
 using NLog.Targets;
 using Utils.Torch;
 
-namespace InfluxDb.Torch
+namespace Utils.General
 {
-    public class TorchInfluxDbLoggingConfigurator
+    internal class FileLoggingConfigurator
     {
         public interface IConfig
         {
@@ -14,29 +14,25 @@ namespace InfluxDb.Torch
             string LogFilePath { get; }
         }
 
-        const string TargetName = "InfluxDbLogFile";
-        const string NamePattern = "InfluxDb.*";
-        public const string DefaultLogFilePath = "Logs/InfluxDb-${shortdate}.log";
-
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         readonly FileTarget _target;
         readonly LoggingRule _rule;
 
-        public TorchInfluxDbLoggingConfigurator()
+        public FileLoggingConfigurator(string targetName, string namePattern, string defaultFilePath)
         {
             _target = new FileTarget
             {
-                Name = TargetName,
+                Name = targetName,
             };
 
             _rule = new LoggingRule
             {
-                LoggerNamePattern = NamePattern,
+                LoggerNamePattern = namePattern,
                 Final = true,
             };
 
             // default config
-            _target.FileName = DefaultLogFilePath;
+            _target.FileName = defaultFilePath;
             _rule.Targets.Add(_target);
             _rule.Targets.Add(TorchUtils.GetWpfTarget());
             _rule.EnableLoggingForLevels(LogLevel.Info, LogLevel.Off);
@@ -67,7 +63,7 @@ namespace InfluxDb.Torch
             _rule.EnableLoggingForLevels(minLevel, LogLevel.Off);
 
             LogManager.ReconfigExistingLoggers();
-            
+
             Log.Info($"Reconfigured; wpf={!config.SuppressWpfOutput}, minlevel={minLevel}");
         }
     }

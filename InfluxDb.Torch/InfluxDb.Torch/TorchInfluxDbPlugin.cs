@@ -6,6 +6,7 @@ using NLog;
 using Torch;
 using Torch.API;
 using Torch.API.Plugins;
+using Utils.General;
 using Utils.Torch;
 
 namespace InfluxDb.Torch
@@ -20,7 +21,7 @@ namespace InfluxDb.Torch
         InfluxDbWriteEndpoints _endpoints;
         InfluxDbWriteClient _writeClient;
         ThrottledInfluxDbWriteClient _throttledWriteClient;
-        TorchInfluxDbLoggingConfigurator _loggingConfigurator;
+        FileLoggingConfigurator _loggingConfigurator;
 
         public UserControl GetControl() => _config.GetOrCreateUserControl(ref _userControl);
 
@@ -30,7 +31,7 @@ namespace InfluxDb.Torch
             this.ListenOnGameLoaded(OnGameLoaded);
             this.ListenOnGameUnloading(OnGameUnloading);
 
-            _loggingConfigurator = new TorchInfluxDbLoggingConfigurator();
+            _loggingConfigurator = new FileLoggingConfigurator("InfluxDbLogFile", "InfluxDb.*", TorchInfluxDbConfig.DefaultLogFilePath);
             _loggingConfigurator.Initialize();
 
             var configFilePath = this.MakeConfigFilePath();
