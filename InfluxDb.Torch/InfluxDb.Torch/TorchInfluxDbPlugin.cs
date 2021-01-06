@@ -90,10 +90,14 @@ namespace InfluxDb.Torch
 
         void OnGameUnloading()
         {
+            Log.Info("Unloading...");
+
             _config.Dispose();
             _throttledWriteClient?.StopWriting();
             _throttledWriteClient?.Flush();
             _endpoints?.Dispose();
+
+            Log.Info("Unloaded");
         }
     }
 }
