@@ -20,13 +20,18 @@ namespace InfluxDb.Torch
         InfluxDbWriteEndpoints _endpoints;
         InfluxDbWriteClient _writeClient;
         ThrottledInfluxDbWriteClient _throttledWriteClient;
+        TorchInfluxDbLoggingConfigurator _loggingConfigurator;
 
         public UserControl GetControl() => _config.GetOrCreateUserControl(ref _userControl);
 
         public override void Init(ITorchBase torch)
         {
             base.Init(torch);
-            this.ListenOnGameUnloading(() => OnGameUnloading());
+            this.ListenOnGameLoaded(OnGameLoaded);
+            this.ListenOnGameUnloading(OnGameUnloading);
+
+            _loggingConfigurator = new TorchInfluxDbLoggingConfigurator();
+            _loggingConfigurator.Initialize();
 
             var configFilePath = this.MakeConfigFilePath();
             _config = Persistent<TorchInfluxDbConfig>.Load(configFilePath);
@@ -34,42 +39,53 @@ namespace InfluxDb.Torch
 
             var auth = new InfluxDbAuth(config);
             _endpoints = new InfluxDbWriteEndpoints(auth);
-            _writeClient = new InfluxDbWriteClient(_endpoints, config);
+            _writeClient = new InfluxDbWriteClient(_endpoints);
 
             var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
             _throttledWriteClient = new ThrottledInfluxDbWriteClient(_writeClient, interval);
 
             TorchInfluxDbWriter.WriteEndpoints = _endpoints;
             TorchInfluxDbWriter.WriteClient = _throttledWriteClient;
-            TorchInfluxDbWriter.Enabled = config.Enable;
-
-            config.PropertyChanged += (_, __) => OnConfigUpdated();
 
             if (config.Enable)
             {
-                TestIntegrity();
+                try
+                {
+                    Log.Info("Testing database connection...");
+
+                    var point = new InfluxDbPoint("plugin_init").Field("message", "successfully initialized");
+                    _writeClient.WriteAsync(point).Wait();
+
+                    Log.Info("Done testing databse connection");
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                }
             }
-
-            _throttledWriteClient.SetRunning(config.Enable);
         }
 
-        void OnConfigUpdated()
+        void OnGameLoaded()
         {
-            var config = _config.Data;
+            _config.Data.PropertyChanged += (_, __) =>
+            {
+                OnConfigUpdated(_config.Data);
+            };
 
-            TorchInfluxDbWriter.Enabled = config.Enable;
-
-            _throttledWriteClient.SetRunning(config.Enable);
-
-            Log.Info($"Update config; database writing enabled: {config.Enable}");
+            OnConfigUpdated(_config.Data);
         }
 
-        void TestIntegrity()
+        void OnConfigUpdated(TorchInfluxDbConfig config)
         {
-            var point = new InfluxDbPoint("plugin_init").Field("message", "successfully initialized");
-            _writeClient.WriteAsync(point).Wait();
+            _loggingConfigurator.Reconfigure(config);
 
-            Log.Info("InfluxDB integrity tested");
+            if (config.Enable != TorchInfluxDbWriter.Enabled)
+            {
+                TorchInfluxDbWriter.Enabled = config.Enable;
+                _throttledWriteClient.SetRunning(config.Enable);
+
+                Log.Info($"Writing enabled: {config.Enable}");
+            }
         }
 
         void OnGameUnloading()

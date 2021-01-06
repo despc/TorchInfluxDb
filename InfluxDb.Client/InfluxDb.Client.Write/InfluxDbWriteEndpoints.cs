@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -57,23 +58,46 @@ namespace InfluxDb.Client.Write
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
-                if (!res.IsSuccessStatusCode)
+                if (res.IsSuccessStatusCode)
                 {
-                    var msgBuilder = new StringBuilder();
-
-                    msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
-                    msgBuilder.AppendLine($"{_auth}");
-                    msgBuilder.AppendLine($"Content ({lines.Count} lines): ");
-
-                    foreach (var line in lines)
-                    {
-                        msgBuilder.AppendLine($"Line: {line}");
-                    }
-
-                    throw new Exception(msgBuilder.ToString());
+                    Log.Debug("Finished writing");
+                    return;
                 }
 
-                Log.Debug("Finished writing");
+                switch (res.StatusCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+                    {
+                        var msgBuilder = new StringBuilder();
+                        msgBuilder.AppendLine("Authentication failed");
+                        msgBuilder.AppendLine($"{_auth}");
+                        throw new Exception(msgBuilder.ToString());
+                    }
+                    case HttpStatusCode.Forbidden:
+                    case HttpStatusCode.BadGateway:
+                    case HttpStatusCode.NotFound:
+                    {
+                        var msgBuilder = new StringBuilder();
+                        msgBuilder.AppendLine($"{res.StatusCode}");
+                        msgBuilder.AppendLine($"{_auth}");
+                        throw new Exception(msgBuilder.ToString());
+                    }
+                    default:
+                    {
+                        var msgBuilder = new StringBuilder();
+
+                        msgBuilder.AppendLine($"{res.StatusCode}");
+                        msgBuilder.AppendLine($"{_auth}");
+                        msgBuilder.AppendLine($"Content ({lines.Count} lines): ");
+
+                        foreach (var line in lines)
+                        {
+                            msgBuilder.AppendLine($"Line: {line}");
+                        }
+
+                        throw new Exception(msgBuilder.ToString());
+                    }
+                }
             }
         }
     }
