@@ -48,25 +48,6 @@ namespace Utils.General
             return false;
         }
 
-        public static void RemoveAll<T>(this IList<T> self, Func<T, bool> f)
-        {
-            for (var i = self.Count - 1; i >= 0; i--)
-            {
-                if (f(self[i]))
-                {
-                    self.RemoveAt(i);
-                }
-            }
-        }
-
-        public static void AddRange<T>(this ICollection<T> self, IEnumerable<T> elements)
-        {
-            foreach (var element in elements)
-            {
-                self.Add(element);
-            }
-        }
-
         public static void Increment<K>(this IDictionary<K, int> self, K key)
         {
             self.TryGetValue(key, out var value);
