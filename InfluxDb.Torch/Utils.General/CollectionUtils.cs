@@ -48,25 +48,6 @@ namespace Utils.General
             return false;
         }
 
-        public static void RemoveAll<T>(this IList<T> self, Func<T, bool> f)
-        {
-            for (var i = self.Count - 1; i >= 0; i--)
-            {
-                if (f(self[i]))
-                {
-                    self.RemoveAt(i);
-                }
-            }
-        }
-
-        public static void AddRange<T>(this ICollection<T> self, IEnumerable<T> elements)
-        {
-            foreach (var element in elements)
-            {
-                self.Add(element);
-            }
-        }
-
         public static void Increment<K>(this IDictionary<K, int> self, K key)
         {
             self.TryGetValue(key, out var value);
@@ -142,6 +123,17 @@ namespace Utils.General
         public static IReadOnlyDictionary<K, V> ToDictionary<K, V>(this IEnumerable<(K, V)> self)
         {
             return self.ToDictionary(p => p.Item1, p => p.Item2);
+        }
+
+        public static void Add<K, V, C>(this IDictionary<K, C> self, K key, V element) where C : ICollection<V>, new()
+        {
+            if (!self.TryGetValue(key, out var elements))
+            {
+                elements = new C();
+                self[key] = elements;
+            }
+
+            elements.Add(element);
         }
     }
 }
