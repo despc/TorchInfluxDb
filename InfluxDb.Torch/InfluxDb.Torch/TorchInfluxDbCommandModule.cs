@@ -37,44 +37,44 @@ namespace InfluxDb.Torch
 
         [Command("enable")]
         [Permission(MyPromoteLevel.Admin)]
-        public void Enable()
+        public void Enable() => this.CatchAndReport(() =>
         {
             Plugin.Config.Enable = true;
-        }
+        });
 
         [Command("disable")]
         [Permission(MyPromoteLevel.Admin)]
-        public void Disable()
+        public void Disable() => this.CatchAndReport(() =>
         {
             Plugin.Config.Enable = false;
-        }
+        });
 
         [Command("host")]
         [Permission(MyPromoteLevel.Admin)]
-        public void SetHostUrl(string hostUrl)
+        public void SetHostUrl(string hostUrl) => this.CatchAndReport(() =>
         {
             Plugin.Config.HostUrl = hostUrl;
-        }
+        });
 
         [Command("organization")]
         [Permission(MyPromoteLevel.Admin)]
-        public void SetOrganization(string organization)
+        public void SetOrganization(string organization) => this.CatchAndReport(() =>
         {
             Plugin.Config.Organization = organization;
-        }
+        });
 
         [Command("bucket")]
         [Permission(MyPromoteLevel.Admin)]
-        public void SetBucket(string bucket)
+        public void SetBucket(string bucket) => this.CatchAndReport(() =>
         {
             Plugin.Config.Bucket = bucket;
-        }
+        });
 
         [Command("token")]
         [Permission(MyPromoteLevel.Admin)]
-        public void SetToken(string token)
+        public void SetToken(string token) => this.CatchAndReport(() =>
         {
             Plugin.Config.AuthenticationToken = token;
-        }
+        });
     }
 }
