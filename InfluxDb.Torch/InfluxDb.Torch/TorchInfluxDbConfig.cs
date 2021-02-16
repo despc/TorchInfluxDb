@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using InfluxDb.Client;
+using InfluxDb.Client.V18;
 using Torch;
 using Torch.Views;
 using Utils.Torch;
@@ -9,10 +10,12 @@ namespace InfluxDb.Torch
     public sealed class TorchInfluxDbConfig :
         ViewModel,
         IInfluxDbAuthConfig,
+        IInfluxDbAuthConfigV18,
         FileLoggingConfigurator.IConfig
     {
         const string OperationGroupName = "Operation";
         const string CredentialsGroupName = "Credentials";
+        const string CredentialsV18GroupName = "Credentials (v1.8)";
 
         public const string DefaultLogFilePath = "Logs/InfluxDb-${shortdate}.log";
 
@@ -26,6 +29,9 @@ namespace InfluxDb.Torch
         bool _suppressWpfOutput;
         bool _enableLoggingTrace;
         bool _enableLoggingDebug;
+        string _username;
+        string _password;
+        bool _useV18;
 
         [XmlElement(nameof(Enable))]
         [Display(Order = 0, Name = "Enable", GroupName = OperationGroupName)]
@@ -65,6 +71,30 @@ namespace InfluxDb.Torch
         {
             get => _authenticationToken;
             set => SetValue(ref _authenticationToken, value);
+        }
+
+        [XmlElement(nameof(UseV18))]
+        [Display(Order = 2, Name = "Use v1.8 (NEED RESTART)", GroupName = CredentialsV18GroupName)]
+        public bool UseV18
+        {
+            get => _useV18;
+            set => SetValue(ref _useV18, value);
+        }
+
+        [XmlElement(nameof(Username))]
+        [Display(Order = 3, Name = "Username (v1.8)", GroupName = CredentialsV18GroupName)]
+        public string Username
+        {
+            get => _username;
+            set => SetValue(ref _username, value);
+        }
+
+        [XmlElement(nameof(Password))]
+        [Display(Order = 5, Name = "Password (v1.8)", GroupName = CredentialsV18GroupName)]
+        public string Password
+        {
+            get => _password;
+            set => SetValue(ref _password, value);
         }
 
         [XmlElement(nameof(WriteIntervalSecs))]

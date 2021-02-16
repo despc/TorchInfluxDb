@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Windows.Controls;
 using InfluxDb.Client;
+using InfluxDb.Client.V18;
 using InfluxDb.Client.Write;
 using NLog;
 using Torch;
 using Torch.API;
 using Torch.API.Plugins;
-using Utils.General;
 using Utils.Torch;
 
 namespace InfluxDb.Torch
@@ -18,8 +18,7 @@ namespace InfluxDb.Torch
         Persistent<TorchInfluxDbConfig> _config;
         UserControl _userControl;
 
-        InfluxDbWriteEndpoints _endpoints;
-        InfluxDbWriteClient _writeClient;
+        IInfluxDbWriteEndpoints _endpoints;
         ThrottledInfluxDbWriteClient _throttledWriteClient;
         FileLoggingConfigurator _loggingConfigurator;
 
@@ -34,30 +33,36 @@ namespace InfluxDb.Torch
 
             var configFilePath = this.MakeConfigFilePath();
             _config = Persistent<TorchInfluxDbConfig>.Load(configFilePath);
-            var config = _config.Data;
 
             _loggingConfigurator = new FileLoggingConfigurator("InfluxDbLogFile", new[] {"InfluxDb.*"}, TorchInfluxDbConfig.DefaultLogFilePath);
             _loggingConfigurator.Initialize();
             _loggingConfigurator.Configure(Config);
 
-            var auth = new InfluxDbAuth(config);
-            _endpoints = new InfluxDbWriteEndpoints(auth);
-            _writeClient = new InfluxDbWriteClient(_endpoints);
+            if (Config.UseV18)
+            {
+                _endpoints = new InfluxDbWriteEndpointsV18(Config);
+            }
+            else
+            {
+                var auth = new InfluxDbAuth(Config);
+                _endpoints = new InfluxDbWriteEndpoints(auth);
+            }
 
-            var interval = TimeSpan.FromSeconds(config.WriteIntervalSecs);
-            _throttledWriteClient = new ThrottledInfluxDbWriteClient(_writeClient, interval);
+            var writeClient = new InfluxDbWriteClient(_endpoints);
+            var interval = TimeSpan.FromSeconds(Config.WriteIntervalSecs);
+            _throttledWriteClient = new ThrottledInfluxDbWriteClient(writeClient, interval);
 
             TorchInfluxDbWriter.WriteEndpoints = _endpoints;
             TorchInfluxDbWriter.WriteClient = _throttledWriteClient;
 
-            if (config.Enable)
+            if (Config.Enable)
             {
                 try
                 {
                     Log.Info("Testing database connection...");
 
                     var point = new InfluxDbPoint("plugin_init").Field("message", "successfully initialized");
-                    _writeClient.WriteAsync(point).Wait();
+                    _endpoints.WriteAsync(new[] {point.BuildLine()}).Wait();
 
                     Log.Info("Done testing databse connection");
                 }

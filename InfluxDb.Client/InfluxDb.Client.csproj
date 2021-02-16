@@ -66,11 +66,12 @@
         <Compile Include="InfluxDb.Client.Orm\InfluxDbOrmCreator.cs" />
         <Compile Include="InfluxDb.Client.Orm\InfluxDbOrmFactory.cs" />
         <Compile Include="InfluxDb.Client.Orm\TagAttribute.cs" />
-        <Compile Include="InfluxDb.Client.Read\IInfluxDbReadClient.cs" />
         <Compile Include="InfluxDb.Client.Read\InfluxDbReadClient.cs" />
         <Compile Include="InfluxDb.Client.Read\InfluxDbSeries.cs" />
         <Compile Include="InfluxDb.Client.Read\InfluxDbReadEndpoints.cs" />
-        <Compile Include="InfluxDb.Client.Write\IInfluxDbWriteClient.cs" />
+        <Compile Include="InfluxDb.Client.V18\IInfluxDbAuthConfigV18.cs" />
+        <Compile Include="InfluxDb.Client.V18\InfluxDbWriteEndpointsV18.cs" />
+        <Compile Include="InfluxDb.Client.Write\IInfluxDbWriteEndpoints.cs" />
         <Compile Include="InfluxDb.Client.Write\InfluxDbEscapeHandler.cs" />
         <Compile Include="InfluxDb.Client.Write\InfluxDbPoint.cs" />
         <Compile Include="InfluxDb.Client.Write\InfluxDbWriteClient.cs" />
