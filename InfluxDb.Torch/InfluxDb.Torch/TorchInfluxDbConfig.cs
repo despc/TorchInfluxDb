@@ -2,7 +2,7 @@
 using InfluxDb.Client;
 using Torch;
 using Torch.Views;
-using Utils.General;
+using Utils.Torch;
 
 namespace InfluxDb.Torch
 {
@@ -13,7 +13,7 @@ namespace InfluxDb.Torch
     {
         const string OperationGroupName = "Operation";
         const string CredentialsGroupName = "Credentials";
-        
+
         public const string DefaultLogFilePath = "Logs/InfluxDb-${shortdate}.log";
 
         bool _enable;
@@ -25,8 +25,9 @@ namespace InfluxDb.Torch
         string _logFilePath = DefaultLogFilePath;
         bool _suppressWpfOutput;
         bool _enableLoggingTrace;
+        bool _enableLoggingDebug;
 
-        [XmlElement("Enable")]
+        [XmlElement(nameof(Enable))]
         [Display(Order = 0, Name = "Enable", GroupName = OperationGroupName)]
         public bool Enable
         {
@@ -34,7 +35,7 @@ namespace InfluxDb.Torch
             set => SetValue(ref _enable, value);
         }
 
-        [XmlElement("HostUrl")]
+        [XmlElement(nameof(HostUrl))]
         [Display(Order = 2, Name = "Host URL", GroupName = CredentialsGroupName)]
         public string HostUrl
         {
@@ -42,7 +43,7 @@ namespace InfluxDb.Torch
             set => SetValue(ref _hostUrl, value);
         }
 
-        [XmlElement("Organization")]
+        [XmlElement(nameof(Organization))]
         [Display(Order = 3, Name = "Organization", GroupName = CredentialsGroupName)]
         public string Organization
         {
@@ -50,7 +51,7 @@ namespace InfluxDb.Torch
             set => SetValue(ref _organization, value);
         }
 
-        [XmlElement("Bucket")]
+        [XmlElement(nameof(Bucket))]
         [Display(Order = 4, Name = "Bucket Name", GroupName = CredentialsGroupName)]
         public string Bucket
         {
@@ -58,7 +59,7 @@ namespace InfluxDb.Torch
             set => SetValue(ref _bucket, value);
         }
 
-        [XmlElement("AuthenticationToken")]
+        [XmlElement(nameof(AuthenticationToken))]
         [Display(Order = 5, Name = "Authentication Token (Optional)", GroupName = CredentialsGroupName)]
         public string AuthenticationToken
         {
@@ -66,7 +67,7 @@ namespace InfluxDb.Torch
             set => SetValue(ref _authenticationToken, value);
         }
 
-        [XmlElement("WriteIntervalSecs")]
+        [XmlElement(nameof(WriteIntervalSecs))]
         [Display(Order = 7, Name = "Throttle Interval (Seconds)", GroupName = OperationGroupName)]
         public float WriteIntervalSecs
         {
@@ -74,7 +75,7 @@ namespace InfluxDb.Torch
             set => SetValue(ref _writeIntervalSecs, value);
         }
 
-        [XmlElement("LogFilePath")]
+        [XmlElement(nameof(LogFilePath))]
         [Display(Order = 8, Name = "Log File Path", GroupName = OperationGroupName)]
         public string LogFilePath
         {
@@ -82,7 +83,7 @@ namespace InfluxDb.Torch
             set => SetValue(ref _logFilePath, value);
         }
 
-        [XmlElement("SuppressWpfOutput")]
+        [XmlElement(nameof(SuppressWpfOutput))]
         [Display(Order = 9, Name = "Suppress Console Output", GroupName = OperationGroupName)]
         public bool SuppressWpfOutput
         {
@@ -90,12 +91,20 @@ namespace InfluxDb.Torch
             set => SetValue(ref _suppressWpfOutput, value);
         }
 
-        [XmlElement("EnableLoggingTrace")]
+        [XmlElement(nameof(EnableLoggingTrace))]
         [Display(Order = 10, Name = "Enable Logging Trace", GroupName = OperationGroupName)]
         public bool EnableLoggingTrace
         {
             get => _enableLoggingTrace;
             set => SetValue(ref _enableLoggingTrace, value);
+        }
+
+        [XmlElement(nameof(EnableLoggingDebug))]
+        [Display(Order = 10, Name = "Enable Logging Debug", GroupName = OperationGroupName)]
+        public bool EnableLoggingDebug
+        {
+            get => _enableLoggingDebug;
+            set => SetValue(ref _enableLoggingDebug, value);
         }
     }
 }
