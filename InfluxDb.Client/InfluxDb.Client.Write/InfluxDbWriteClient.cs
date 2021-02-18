@@ -6,12 +6,12 @@ using NLog;
 
 namespace InfluxDb.Client.Write
 {
-    public sealed class InfluxDbWriteClient : IInfluxDbWriteClient
+    public sealed class InfluxDbWriteClient
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
-        readonly InfluxDbWriteEndpoints _endpoints;
+        readonly IInfluxDbWriteEndpoints _endpoints;
 
-        public InfluxDbWriteClient(InfluxDbWriteEndpoints endpoints)
+        public InfluxDbWriteClient(IInfluxDbWriteEndpoints endpoints)
         {
             _endpoints = endpoints;
         }

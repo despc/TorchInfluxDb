@@ -4,7 +4,7 @@ using InfluxDb.Client.Orm;
 
 namespace InfluxDb.Client.Read
 {
-    public sealed class InfluxDbReadClient : IInfluxDbReadClient
+    public sealed class InfluxDbReadClient
     {
         readonly InfluxDbReadEndpoints _endpoints;
 

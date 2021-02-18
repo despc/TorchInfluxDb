@@ -12,7 +12,7 @@ namespace InfluxDb.Torch
     public static class TorchInfluxDbWriter
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
-        internal static InfluxDbWriteEndpoints WriteEndpoints { private get; set; }
+        internal static IInfluxDbWriteEndpoints WriteEndpoints { private get; set; }
         internal static ThrottledInfluxDbWriteClient WriteClient { private get; set; }
         internal static bool Enabled { get; set; }
 
