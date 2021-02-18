@@ -157,7 +157,7 @@ namespace InfluxDb.Client.Write
             return this;
         }
 
-        internal string BuildLine()
+        public string BuildLine()
         {
             if (_fields.Count == 0)
             {

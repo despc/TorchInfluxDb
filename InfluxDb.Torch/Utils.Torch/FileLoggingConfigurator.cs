@@ -1,9 +1,8 @@
 ﻿using NLog;
 using NLog.Config;
 using NLog.Targets;
-using Utils.Torch;
 
-namespace Utils.General
+namespace Utils.Torch
 {
     internal class FileLoggingConfigurator
     {
@@ -11,6 +10,7 @@ namespace Utils.General
         {
             bool SuppressWpfOutput { get; }
             bool EnableLoggingTrace { get; }
+            bool EnableLoggingDebug { get; }
             string LogFilePath { get; }
         }
 
@@ -69,7 +69,7 @@ namespace Utils.General
                     rule.Targets.Add(TorchUtils.GetWpfTarget());
                 }
 
-                var minLevel = config.EnableLoggingTrace ? LogLevel.Trace : LogLevel.Info;
+                var minLevel = GetMinLogLevel(config);
                 rule.DisableLoggingForLevel(LogLevel.Trace);
                 rule.DisableLoggingForLevel(LogLevel.Debug);
                 rule.EnableLoggingForLevels(minLevel, LogLevel.Off);
@@ -78,6 +78,13 @@ namespace Utils.General
             }
 
             LogManager.ReconfigExistingLoggers();
+        }
+
+        LogLevel GetMinLogLevel(IConfig config)
+        {
+            if (config.EnableLoggingTrace) return LogLevel.Trace;
+            if (config.EnableLoggingDebug) return LogLevel.Debug;
+            return LogLevel.Info;
         }
     }
 }

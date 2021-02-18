@@ -15,10 +15,10 @@ namespace InfluxDb.Client.Write
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
-        readonly IInfluxDbWriteClient _self;
+        readonly InfluxDbWriteClient _self;
         readonly ThreadSafeThrottle<InfluxDbPoint> _throttle;
 
-        public ThrottledInfluxDbWriteClient(IInfluxDbWriteClient self, TimeSpan throttleInterval)
+        public ThrottledInfluxDbWriteClient(InfluxDbWriteClient self, TimeSpan throttleInterval)
         {
             _self = self;
 

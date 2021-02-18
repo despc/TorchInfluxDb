@@ -11,7 +11,7 @@ using Utils.General;
 namespace InfluxDb.Client.Write
 {
     // https://docs.influxdata.com/influxdb/v2.0/write-data/developer-tools/api/
-    public sealed class InfluxDbWriteEndpoints : IDisposable
+    public sealed class InfluxDbWriteEndpoints : IInfluxDbWriteEndpoints
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         readonly InfluxDbAuth _auth;
