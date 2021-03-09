@@ -1,7 +1,12 @@
 TorchInfluxDb
 ===
 
-[InfluxDB](https://www.influxdata.com/) integration & configuration UI.
+[InfluxDB v2.0](https://www.influxdata.com/) integration.
+
+Installation
+---
+
+[TorchAPI plugin page](https://torchapi.net/plugins/item/5af3a335-0e25-4ddd-9fc7-6084d7e42e79)
 
 Code Sample
 ---
@@ -16,46 +21,30 @@ Code Sample
       .Write();
 ```
 
-Configuration UI
+Plugin Configuration
 ---
 
-* `Enable` -- Sends data to the InfluxDB instance.
-* `Host URL` -- URL to the the InfluxDB instance.
-* `Organization Name` -- Organization name to use when sending data to the InfluxDB instance.
-* `Username` -- Authentication username for the write access to the InfluxDB instance.
-* `Password` -- Authentication password for the write access to the InfluxDB instance.
-* `Throttle Interval (Seconds)` -- Minimizes the number of HTTP calls using a queue.
-* `Suppress Response Errors` -- Ignores network/authentication errors.
+### Credentials
+* `Host URL`
+* `Organization Name`
+* `Bucket Name`
+* `Authentication Token`
 
-You don't need to restart Torch to apply changes.
+### Operation
+* `Enable` -- Enables writing.
+* `Throttle Interval (Seconds)` -- Sets frequency to write points in queue.
+* `Log File Path` -- Sets log file path for `InfluxDb.*` namespace.
+* `Suppress Console Output` -- Hides logs from Torch console UI.
+* `Enable Logging Trace` -- Enables logging "trace" entries.
 
-Specification
----
-
-Based on [the official Line Protocol (v1.8)](https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_reference/).
+Note you don't need to restart Torch.
 
 License
 ---
 
 MIT License.
 
-How To Set Up InfluxDB Instance
+See Also
 ---
 
-This plugin alone won't store data. You will have to set up an InfluxDB instance to write data to.
-
-* Follow [the official instruction (v1.8)](https://docs.influxdata.com/influxdb/v1.8/introduction/)
-* Choose either a self-hosted or cloud-hosted instance (both work).
-* `plugin_init.message` will receive test data on plugin init. Make sure to `Enable` and not `Suppress Response Errors`.
-
-How to Set Up Grafana
----
-
-[Grafana](https://grafana.com/) is a web-based observatory tool with a highly customizable graphical dashboard.
-
-[Example dashboard](http://play.se.hnz.asia:3000/d/9UUUl7pGk/hnz-gaalsien?orgId=1&refresh=30s) (if still alive).
-
-* Follow [the official instruction](https://grafana.com/docs/grafana/latest/installation/windows/).
-* Add [InfluxDB data source](https://grafana.com/docs/grafana/latest/datasources/influxdb/)
-* Wire up your data on the dashboard.
-* Optional: Enable [anonymous authentication](https://grafana.com/docs/grafana/latest/auth/overview/#anonymous-authentication) to allow everyone to the dashboard with readonly access.
+* [Torch Monitor Plugin](https://github.com/HnZGaming/TorchMonitor)
