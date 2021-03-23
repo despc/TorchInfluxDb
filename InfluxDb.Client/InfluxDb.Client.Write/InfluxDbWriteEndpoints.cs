@@ -61,6 +61,12 @@ namespace InfluxDb.Client.Write
                 if (res.IsSuccessStatusCode)
                 {
                     Log.Debug("Finished writing");
+
+                    if (Log.IsTraceEnabled)
+                    {
+                        Log.Trace("\n" + content);
+                    }
+
                     return;
                 }
 
