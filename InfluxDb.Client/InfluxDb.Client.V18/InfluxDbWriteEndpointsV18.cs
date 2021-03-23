@@ -55,7 +55,17 @@ namespace InfluxDb.Client.V18
 
             using (var res = await _httpClient.SendAsync(req, _cancellationTokenSource.Token).ConfigureAwait(false))
             {
-                if (res.IsSuccessStatusCode) return; // success
+                if (res.IsSuccessStatusCode)
+                {
+                    Log.Debug("Finished writing");
+
+                    if (Log.IsTraceEnabled)
+                    {
+                        Log.Trace("\n" + content);
+                    }
+
+                    return;
+                }
 
                 var msgBuilder = new StringBuilder();
                 msgBuilder.AppendLine($"Failed to write ({res.StatusCode});");
