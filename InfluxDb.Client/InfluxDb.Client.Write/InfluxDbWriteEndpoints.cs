@@ -61,6 +61,12 @@ namespace InfluxDb.Client.Write
                 if (res.IsSuccessStatusCode)
                 {
                     Log.Debug("Finished writing");
+
+                    if (Log.IsTraceEnabled)
+                    {
+                        Log.Trace("\n" + content);
+                    }
+
                     return;
                 }
 
@@ -86,7 +92,8 @@ namespace InfluxDb.Client.Write
                     {
                         var msgBuilder = new StringBuilder();
 
-                        msgBuilder.AppendLine($"{res.StatusCode}");
+                        var contentTxt = await res.Content.ReadAsStringAsync();
+                        msgBuilder.AppendLine($"{res.StatusCode}: \"{contentTxt}\"");
                         msgBuilder.AppendLine($"{_auth}");
                         msgBuilder.AppendLine($"Content ({lines.Count} lines): ");
 
