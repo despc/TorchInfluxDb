@@ -14,6 +14,7 @@ namespace InfluxDb.Client.Write
 
         static string Handle(string input, string specialChars)
         {
+            input = input.Replace('\\', '_'); // idk just lazy atm
             return Regex.Replace(input, specialChars, Escape);
         }
 
