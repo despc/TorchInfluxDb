@@ -5,12 +5,12 @@ namespace InfluxDb.Client.Write
     // https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/#special-characters
     public static class InfluxDbEscapeHandler
     {
-        const string Escape = @"\$1";
         const string MeasurementSpecialChars = @"([, ])";
         const string TagKeySpecialChars = @"([,= ])";
         const string TagValueSpecialChars = @"([,= ])";
         const string FieldKeySpecialChars = @"([,= ])";
         const string FieldValueSpecialChars = @"([""\\])";
+        const string Escape = @"\$1";
 
         static string Handle(string input, string specialChars)
         {
